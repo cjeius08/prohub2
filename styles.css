@@ -5625,7 +5625,7 @@ body {
   overflow-x: hidden;
   background:
     linear-gradient(rgba(247, 226, 174, 0.82), rgba(238, 215, 158, 0.88)),
-    url("grand-line-map-bg.webp") center top / 980px auto repeat !important;
+    url("grand-line-map-bg.png") center top / 980px auto repeat !important;
   color: var(--grand-ink) !important;
 }
 
