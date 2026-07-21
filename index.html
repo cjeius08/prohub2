@@ -1,0 +1,1667 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cjei Work Hub</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <img src="assets/cjei-work-hub-logo.png" alt="Cjei Work Hub Logo" class="site-logo" />
+      </div>
+    </header>
+
+    <section class="brand-hero" aria-label="Cjei Work Hub overview">
+      <div class="hero-icon" aria-hidden="true">AI</div>
+      <div>
+        <span>Cjei Work Hub</span>
+        <strong>Search customer scripts, manuals, ticket notes, Medify references, and tools in one clean workspace.</strong>
+      </div>
+      <div class="hero-stat" aria-label="Workspace benefit">
+        <span>Smart lookup</span>
+        <strong>Answers in seconds</strong>
+      </div>
+    </section>
+
+    <main class="layout">
+      <aside class="sidebar" aria-label="Workspace navigation">
+        <div class="nav-dock">
+          <span class="nav-group-label nav-dock-label">Start here</span>
+          <button class="nav-item nav-home active" data-view="hub" title="Dashboard">
+            <span class="icon">D</span>
+            <span>Dashboard</span>
+          </button>
+
+          <details class="nav-dropdown">
+            <summary>
+              <span>Daily workflow</span>
+              <small>Email · Chat · Voice</small>
+            </summary>
+            <div class="nav-dropdown-menu">
+              <button class="nav-item" data-view="canned" title="Ready-to-send email responses">
+                <span class="icon">E</span>
+                <span>Email Responses</span>
+              </button>
+              <button class="nav-item" data-view="l1chats" title="L1 chat greetings and assistance templates">
+                <span class="icon">L1</span>
+                <span>L1 Chats</span>
+              </button>
+              <button class="nav-item" data-view="tickets" title="Ticket notes and previous cases">
+                <span class="icon">N</span>
+                <span>Ticket Notes</span>
+              </button>
+              <button class="nav-item" data-view="ticketLinks" title="Search and open saved Help Scout ticket links">
+                <span class="icon">TL</span>
+                <span>Ticket Links</span>
+              </button>
+              <button class="nav-item" data-view="voice" title="Voice call flow, spiels, and call notes">
+                <span class="icon">V</span>
+                <span>Voice Calls</span>
+              </button>
+            </div>
+          </details>
+
+          <details class="nav-dropdown">
+            <summary>
+              <span>Case tabs</span>
+              <small>Orders · Products · Support</small>
+            </summary>
+            <div class="nav-dropdown-menu">
+              <button class="nav-item" data-view="filterClub" title="Filter Club, subscriptions, cancellations, and charge-date changes">
+                <span class="icon">FC</span>
+                <span>Filter Club</span>
+              </button>
+              <button class="nav-item" data-view="orders" title="Orders, shipping, returns, refunds, and UPS flows">
+                <span class="icon">O</span>
+                <span>Orders & Returns</span>
+              </button>
+              <button class="nav-item" data-view="productInfo" title="Coverage, model comparison, and product notes">
+                <span class="icon">PI</span>
+                <span>Product Info</span>
+              </button>
+              <button class="nav-item" data-view="purifierScript" title="Air purifier recommendation scripts by model">
+                <span class="icon">AP</span>
+                <span>Purifier Scripts</span>
+              </button>
+              <button class="nav-item" data-view="troubleshooting" title="Model-based troubleshooting steps">
+                <span class="icon">TS</span>
+                <span>Troubleshooting</span>
+              </button>
+            </div>
+          </details>
+
+          <details class="nav-dropdown nav-dropdown-wide">
+            <summary>
+              <span>References & tools</span>
+              <small>KB · Manuals · Utilities</small>
+            </summary>
+            <div class="nav-dropdown-menu nav-dropdown-grid">
+              <button class="nav-item" data-view="prompts" title="Copy-ready ChatGPT prompts">
+                <span class="icon">GPT</span>
+                <span>ChatGPT Prompts</span>
+              </button>
+              <button class="nav-item" data-view="faqs" title="Common Medify Air customer questions and copy-ready answers">
+                <span class="icon">FAQ</span>
+                <span>FAQs</span>
+              </button>
+              <button class="nav-item" data-view="internalKb" title="Medify Air internal KB">
+                <span class="icon">KB</span>
+                <span>Internal KB</span>
+              </button>
+              <button class="nav-item" data-view="manuals" title="Manuals and warranty">
+                <span class="icon">M</span>
+                <span>Manuals & Warranty</span>
+              </button>
+              <button class="nav-item" data-view="tools" data-tool-focus="purifierCompare" title="Air purifier side-by-side comparison">
+                <span class="icon">PC</span>
+                <span>Purifier Compare</span>
+              </button>
+              <button class="nav-item" data-view="tools" data-tool-focus="replacement" title="Replacement code generator">
+                <span class="icon">R</span>
+                <span>Replacement Code</span>
+              </button>
+              <button class="nav-item" data-view="favorites" title="Saved scripts">
+                <span class="icon">★</span>
+                <span>Saved Scripts</span>
+              </button>
+              <button class="nav-item" data-view="tools" title="Sheet tools">
+                <span class="icon">FX</span>
+                <span>Sheet Tools</span>
+              </button>
+            </div>
+          </details>
+
+          <details class="nav-dropdown nav-music-dropdown">
+            <summary>
+              <span>Focus music</span>
+              <small id="musicNavStatus">Player</small>
+            </summary>
+            <section class="focus-player" aria-label="Focus music player">
+              <div>
+                <p class="section-kicker">Focus music</p>
+                <strong id="musicTitle">No track loaded</strong>
+                <small id="musicMeta">Add safe audio URLs in focus_music.js</small>
+              </div>
+              <div class="music-controls">
+                <button type="button" id="musicPrev" aria-label="Previous track">Prev</button>
+                <button type="button" id="musicPlay" aria-label="Play or pause focus music">Play</button>
+                <button type="button" id="musicNext" aria-label="Next track">Next</button>
+                <button type="button" id="musicMute" aria-label="Mute or unmute focus music">Mute</button>
+              </div>
+              <label class="volume-control">
+                <span>Volume</span>
+                <input id="musicVolume" type="range" min="0" max="1" step="0.01" value="0.15" />
+              </label>
+            </section>
+          </details>
+        </div>
+      </aside>
+
+      <section class="workspace">
+        <div class="toolbar">
+          <label class="search-box">
+            <span>One Search</span>
+            <input id="searchInput" type="search" placeholder="Type anything: MA-40 UV, refund, warranty, missing package, Recharge, filter smell..." autocomplete="off" />
+          </label>
+          <select id="sheetFilter" aria-label="Filter by sheet"></select>
+          <select id="sectionFilter" aria-label="Filter by section"></select>
+          <p class="one-search-hint">One search now checks scripts, ticket notes, manuals, warranty info, internal KB, product specs, replacement codes, and tools.</p>
+        </div>
+
+        <section class="note-template-bar" aria-label="Quick copy note templates and YouTube playlist">
+          <div class="note-template-intro">
+            <p class="section-kicker">Quick copy notes</p>
+            <h2>Support note templates</h2>
+            <p>Use this for quick Email notes. Voice call notes and missed-call templates now have their own dedicated page. Your YouTube playlist also saves on this browser.</p>
+          </div>
+
+          <div class="note-template-grid">
+            <article class="note-template-card">
+              <div class="note-template-card-head">
+                <strong>For Email</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Order ID: &#10;Order Date: &#10;SKU: &#10;Issue: &#10;JA" data-copy-label="Email note template copied" data-copy-key="quick-email-note" data-mark-completed="true">Copy Email</button>
+              </div>
+              <pre>Order ID: 
+Order Date: 
+SKU: 
+Issue: 
+JA</pre>
+            </article>
+
+            <article class="youtube-playlist-card">
+              <div class="youtube-card-head">
+                <div>
+                  <strong>🎧 My YouTube Playlist</strong>
+                  <span>Paste your playlist link once and it saves on this browser.</span>
+                </div>
+                <button class="youtube-clear" type="button" id="clearPlaylistBtn">Clear</button>
+              </div>
+
+              <div class="youtube-input-row">
+                <input id="playlistUrlInput" type="url" placeholder="Paste YouTube playlist URL here..." autocomplete="off" />
+                <button class="youtube-save" type="button" id="savePlaylistBtn">Save</button>
+              </div>
+
+              <div class="youtube-player-wrap" id="youtubePlayerWrap">
+                <div class="youtube-empty" id="youtubeEmpty">
+                  Add your playlist link to save it here.
+                </div>
+                <div
+                  id="youtubePlaylistFrame"
+                  class="youtube-player-frame"
+                  aria-label="My YouTube Playlist"
+                ></div>
+              </div>
+
+              <div class="youtube-controls" id="youtubeControls" hidden>
+                <button class="youtube-step" type="button" id="youtubePrevBtn" aria-label="Play previous YouTube playlist track">◀ Prev</button>
+                <label class="youtube-track-picker" for="youtubeTrackNumber">
+                  <span>Track #</span>
+                  <input id="youtubeTrackNumber" type="number" min="1" step="1" value="1" inputmode="numeric" />
+                </label>
+                <button class="youtube-load-track" type="button" id="youtubeLoadTrackBtn">Play selected</button>
+                <button class="youtube-step" type="button" id="youtubeNextBtn" aria-label="Play next YouTube playlist track">Next ▶</button>
+              </div>
+
+              <div class="youtube-actions" id="youtubeActions" hidden>
+                <a class="youtube-open" id="openPlaylistLink" href="#" target="_blank" rel="noopener noreferrer">▶ Open playlist on YouTube</a>
+                <button class="youtube-copy-link" type="button" id="copyPlaylistLinkBtn">Copy link</button>
+              </div>
+
+              <p class="youtube-hint">Use Prev/Next or choose a track number to jump through your playlist. If YouTube blocks the embedded player, use “Open playlist on YouTube.” Your playlist link still stays saved here.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="stats" aria-label="Workspace summary">
+          <div><strong id="recordCount">0</strong><span>emails / FAQs</span></div>
+          <div><strong id="kbCount">0</strong><span>internal KB pages</span></div>
+          <div><strong id="manualStatCount">0</strong><span>manuals / warranty</span></div>
+          <div><strong id="toolCount">0</strong><span>tools / tickets</span></div>
+        </section>
+
+        <section id="hubView" class="view active">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Dashboard</p>
+              <h2>One Search Workspace</h2>
+              <p>Use the main search once and get organized results from the whole hub.</p>
+            </div>
+            <span id="hubCount"></span>
+          </div>
+
+          <div class="result-header compact-heading">
+            <h2>Unified Search Results</h2>
+            <span>Everything appears here as you type</span>
+          </div>
+          <div class="quick-actions" aria-label="Common searches">
+            <button class="quick-chip" type="button" data-quick-search="warranty">Warranty</button>
+            <button class="quick-chip" type="button" data-quick-search="troubleshooting">Troubleshooting</button>
+            <button class="quick-chip" type="button" data-quick-search="refund">Refund</button>
+            <button class="quick-chip" type="button" data-quick-search="Recharge">Recharge</button>
+            <button class="quick-chip" type="button" data-quick-search="missing package">Missing package</button>
+            <button class="quick-chip" type="button" data-quick-search="MA-40">MA-40</button>
+          </div>
+          <div id="hubResults" class="knowledge-results"></div>
+        
+          <div class="result-header compact-heading section-shortcuts">
+            <h2>OC Launch Pad</h2>
+            <span>Open the exact tab you need</span>
+          </div>
+
+          <div class="dashboard-section-title">
+            <p class="section-kicker">Daily workflow</p>
+            <strong>Start with the channel, then pick the case type.</strong>
+          </div>
+          <div class="dashboard-grid compact-dashboard" aria-label="Daily workflow cards">
+            <button class="dashboard-card" type="button" data-view="canned">
+              <span class="card-icon">E</span>
+              <strong>Email Responses</strong>
+              <span>Customer-facing email templates arranged for quick copy and search.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="l1chats">
+              <span class="card-icon">L1</span>
+              <strong>L1 Chats</strong>
+              <span>Short chat greetings, acknowledgements, checking lines, closings, and quick links.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="tickets">
+              <span class="card-icon">N</span>
+              <strong>Ticket Notes</strong>
+              <span>Internal notes and previous ticket references for checking what to do next.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="ticketLinks">
+              <span class="card-icon">TL</span>
+              <strong>Ticket Links</strong>
+              <span>Search saved Help Scout cases and open the original ticket in one click.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="voice">
+              <span class="card-icon">V</span>
+              <strong>Voice Calls</strong>
+              <span>Opening spiel, call flow, hold lines, empathy lines, closing spiel, and voice note templates.</span>
+            </button>
+          </div>
+
+          <div class="dashboard-section-title">
+            <p class="section-kicker">Case workspaces</p>
+            <strong>Grouped by issue type so nothing feels scattered.</strong>
+          </div>
+          <div class="dashboard-grid compact-dashboard" aria-label="Case workspace cards">
+            <button class="dashboard-card" type="button" data-view="filterClub">
+              <span class="card-icon">FC</span>
+              <strong>Filter Club</strong>
+              <span>Subscription cancellations, charge-date changes, cadence, benefits, and portal link.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="orders">
+              <span class="card-icon">O</span>
+              <strong>Orders & Returns</strong>
+              <span>Shipping, partial delivery, return labels, UPS pickup, lost/damaged packages, and refunds.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="productInfo">
+              <span class="card-icon">PI</span>
+              <strong>Product Info</strong>
+              <span>Coverage, room fit, discontinued models, H13/H14, ionizer, UV, and comparison helpers.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="purifierScript">
+              <span class="card-icon">AP</span>
+              <strong>Purifier Scripts</strong>
+              <span>Call-friendly recommendation script with model specs, pros, and quick copy lines.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="troubleshooting">
+              <span class="card-icon">TS</span>
+              <strong>Troubleshooting</strong>
+              <span>Model-based reset steps, what to ask, what to check, and when to request a video.</span>
+            </button>
+          </div>
+
+          <div class="dashboard-section-title">
+            <p class="section-kicker">References & favorites</p>
+            <strong>For when you need facts, links, prompts, or saved scripts.</strong>
+          </div>
+          <div class="dashboard-grid compact-dashboard" aria-label="Reference cards">
+            <button class="dashboard-card" type="button" data-view="prompts">
+              <span class="card-icon">GPT</span>
+              <strong>ChatGPT Prompts</strong>
+              <span>Email generator, chat reply generator, accuracy checker, and ready prompts.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="internalKb">
+              <span class="card-icon">KB</span>
+              <strong>Internal KB</strong>
+              <span>Policies, SOPs, troubleshooting articles, and Medify references.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="manuals">
+              <span class="card-icon">M</span>
+              <strong>Manuals & Warranty</strong>
+              <span>Manual links, warranty notes, registration reminders, and source pages.</span>
+            </button>
+            <button class="dashboard-card" type="button" data-view="favorites">
+              <span class="card-icon">★</span>
+              <strong>Saved Scripts</strong>
+              <span>Your personal favorite replies and commonly used wording.</span>
+            </button>
+          </div>
+
+          </section>
+
+        <section id="cannedView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Email response library</p>
+              <h2>Email Responses</h2>
+              <p>Search by customer issue, product/model, category, tags, or response text, then copy the right customer reply quickly.</p>
+            </div>
+            <span id="resultCount"></span>
+          </div>
+          <div class="library-toolbar">
+            <label class="search-box">
+              <span>Search canned responses</span>
+              <input id="cannedSearch" type="search" placeholder="Search refund, warranty, subscription, MA-40, shipping..." autocomplete="off" />
+            </label>
+            <select id="cannedCategory" aria-label="Filter canned responses by category"></select>
+            <select id="cannedModel" aria-label="Filter canned responses by model"></select>
+            <button class="secondary-action" id="clearCannedFilters" type="button">Clear filters</button>
+          </div>
+          <div id="cannedChips" class="chip-row"></div>
+          <div id="cards" class="cards"></div>
+        </section>
+
+        <section id="ticketsView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Ticket Library</p>
+              <h2>Ticket Notes</h2>
+              <p>Search previous internal notes, issue examples, customer scenarios, tags, models, and support references.</p>
+            </div>
+            <span id="ticketLibraryCount"></span>
+          </div>
+          <section class="ticket-note-template-panel" aria-label="Ticket note templates">
+            <div class="ticket-note-template-heading">
+              <div>
+                <p class="section-kicker">Quick copy ticket notes</p>
+                <h3>Ticket Note Templates</h3>
+                <p>Copy the appropriate internal note, complete the missing details, and paste it into the customer ticket.</p>
+              </div>
+              <span id="ticketNoteTemplateCount"></span>
+            </div>
+            <div id="ticketNoteTemplateGrid" class="ticket-note-template-grid"></div>
+          </section>
+
+          <div class="ticket-hero">
+            <label class="search-box">
+              <span>Search tickets</span>
+              <input id="ticketLibrarySearch" type="search" placeholder="Search delivered, unsafe link, MA-25, address update, refund..." autocomplete="off" />
+            </label>
+            <button class="secondary-action" id="clearTicketFilters" type="button">Clear filters</button>
+          </div>
+          <div class="filter-grid">
+            <label>
+              <span>Category</span>
+              <select id="ticketLibraryCategory"></select>
+            </label>
+            <label>
+              <span>Issue type</span>
+              <select id="ticketLibraryIssue"></select>
+            </label>
+            <label>
+              <span>Product / model</span>
+              <select id="ticketLibraryModel"></select>
+            </label>
+            <label>
+              <span>Status</span>
+              <select id="ticketLibraryStatus"></select>
+            </label>
+            <label>
+              <span>Tag</span>
+              <select id="ticketLibraryTag"></select>
+            </label>
+          </div>
+          <div id="ticketLibraryChips" class="chip-row"></div>
+          <div id="ticketLibraryResults" class="ticket-library-grid"></div>
+        </section>
+
+        <section id="ticketLinksView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Direct ticket access</p>
+              <h2>Ticket Links</h2>
+              <p>Search saved Help Scout ticket references by issue, model, category, keyword, or ticket number, then open the original ticket directly.</p>
+            </div>
+            <span id="ticketLinkCount"></span>
+          </div>
+          <div class="ticket-hero ticket-link-hero">
+            <label class="search-box">
+              <span>Find a ticket link</span>
+              <input id="ticketLinkSearch" type="search" placeholder="Search MA-50 LED, warranty, delivered, 65240..." autocomplete="off" />
+            </label>
+            <button class="secondary-action" id="clearTicketLinkSearch" type="button">Clear search</button>
+          </div>
+          <div class="ticket-link-note">
+            <strong>Search Helper shortcut:</strong>
+            <span>Ticket results now include an “Open ticket” button, so you can search from the dashboard or Cjei Bot and go straight to Help Scout.</span>
+          </div>
+          <div id="ticketLinkResults" class="ticket-library-grid ticket-link-grid"></div>
+        </section>
+
+        <section id="voiceView" class="view voice-page">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Voice support</p>
+              <h2>Voice Calls</h2>
+              <p>Dedicated copy cards for call notes, missed-call SMS templates, outbound follow-up emails, and previous-agent call handling.</p>
+            </div>
+            <span>Voice notes + SMS</span>
+          </div>
+
+          <div class="workflow-page voice-flow-panel">
+            <section class="flow-card hero-flow-card">
+              <div>
+                <p class="section-kicker">Call anchor</p>
+                <h3>Simple flow when the call feels everywhere</h3>
+                <p>Listen → verify → check → explain → next step → close warmly.</p>
+              </div>
+              <ol class="flow-steps">
+                <li><strong>1. Listen + acknowledge</strong><span>I understand. Thank you for explaining that to me.</span></li>
+                <li><strong>2. Verify</strong><span>Ask for order number, email, phone, or shipping address.</span></li>
+                <li><strong>3. Check quietly</strong><span>Review order, subscription, warranty, tracking, or notes.</span></li>
+                <li><strong>4. Explain clearly</strong><span>Tell the customer what happened and what we can do next.</span></li>
+                <li><strong>5. Set expectations</strong><span>Give timeframe, email confirmation, tracking, or follow-up steps.</span></li>
+                <li><strong>6. Close with care</strong><span>Ask if they need anything else, then end warmly.</span></li>
+              </ol>
+            </section>
+
+            <section class="script-bank">
+              <article class="note-template-card flow-script-card">
+                <div class="note-template-card-head"><strong>Opening Spiel</strong><button class="note-template-copy" type="button" data-copy-text="Hi! Thank you for calling Medify Air. This is Cjei. How can I help you today?" data-copy-label="Opening spiel copied">Copy</button></div>
+                <pre>Hi! Thank you for calling Medify Air. This is Cjei. How can I help you today?</pre>
+              </article>
+              <article class="note-template-card flow-script-card">
+                <div class="note-template-card-head"><strong>Upset Customer Line</strong><button class="note-template-copy" type="button" data-copy-text="I’m sorry to hear that, but don’t worry. I’ll do my best to check this for you and help get this taken care of." data-copy-label="Empathy line copied">Copy</button></div>
+                <pre>I’m sorry to hear that, but don’t worry. I’ll do my best to check this for you and help get this taken care of.</pre>
+              </article>
+              <article class="note-template-card flow-script-card">
+                <div class="note-template-card-head"><strong>Hold / Checking Line</strong><button class="note-template-copy" type="button" data-copy-text="Thank you. Please give me just a moment while I pull this up and review the details." data-copy-label="Hold line copied">Copy</button></div>
+                <pre>Thank you. Please give me just a moment while I pull this up and review the details.</pre>
+              </article>
+              <article class="note-template-card flow-script-card">
+                <div class="note-template-card-head"><strong>Smile Closing</strong><button class="note-template-copy" type="button" data-copy-text="It was truly a pleasure assisting you today. Thank you so much for your patience and kindness. I’m glad we were able to get this taken care of for you, and I hope you have a wonderful rest of your day!" data-copy-label="Closing spiel copied">Copy</button></div>
+                <pre>It was truly a pleasure assisting you today. Thank you so much for your patience and kindness. I’m glad we were able to get this taken care of for you, and I hope you have a wonderful rest of your day!</pre>
+              </article>
+            </section>
+
+            <div class="section-band aht-call-band">
+              <h3>AHT Call Control / Email Transition Scripts</h3>
+              <span>End long order calls smoothly</span>
+            </div>
+            <section class="script-bank aht-call-script-bank" aria-label="AHT call control and email transition scripts">
+              <article class="note-template-card flow-script-card aht-script-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>AHT Call Control - Continue Order Setup by Email</strong>
+                    <span>Use this when you need to create a draft order, invoice, secure checkout link, or subscription setup and continue by email.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Just to make sure everything is handled correctly, I’ll go ahead and send the details to your email so you can review them carefully. From there, we can continue the next steps by email, and you can reply directly if you have any questions or if anything needs to be adjusted." data-copy-label="AHT Call Control - Continue Order Setup by Email copied">Copy</button>
+                </div>
+                <pre>Just to make sure everything is handled correctly, I’ll go ahead and send the details to your email so you can review them carefully. From there, we can continue the next steps by email, and you can reply directly if you have any questions or if anything needs to be adjusted.</pre>
+              </article>
+              <article class="note-template-card flow-script-card aht-script-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>AHT Call Control - Warm Email Transition</strong>
+                    <span>Friendly version when you do not want the customer to feel rushed.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I want to make sure everything is entered correctly for you, and I also don’t want to keep you waiting on the line while I prepare the order. What I’ll do is send the order details and secure checkout link to your email instead.&#10;&#10;Please review everything first before completing the purchase, and once it’s done, just reply to my email so I can help move the order forward." data-copy-label="AHT Call Control - Warm Email Transition copied">Copy</button>
+                </div>
+                <pre>I want to make sure everything is entered correctly for you, and I also don’t want to keep you waiting on the line while I prepare the order. What I’ll do is send the order details and secure checkout link to your email instead.
+
+Please review everything first before completing the purchase, and once it’s done, just reply to my email so I can help move the order forward.</pre>
+              </article>
+              <article class="note-template-card flow-script-card aht-script-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>AHT Call Control - Long Call / Many Questions</strong>
+                    <span>Use when the customer keeps asking follow-up questions and the call is getting long.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I completely understand, and I want to make sure we get this handled properly. Since I’ll need to prepare the order and send you a secure payment link, the best next step is for me to send everything by email so you can review the details at your convenience.&#10;&#10;That way, you won’t have to stay on the phone while I work on the order, and you can simply reply to my email if anything needs to be changed." data-copy-label="AHT Call Control - Long Call / Many Questions copied">Copy</button>
+                </div>
+                <pre>I completely understand, and I want to make sure we get this handled properly. Since I’ll need to prepare the order and send you a secure payment link, the best next step is for me to send everything by email so you can review the details at your convenience.
+
+That way, you won’t have to stay on the phone while I work on the order, and you can simply reply to my email if anything needs to be changed.</pre>
+              </article>
+              <article class="note-template-card flow-script-card aht-script-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>AHT Call Control - Smooth Call Closing After Email Transition</strong>
+                    <span>Use after explaining that the rest of the order/setup will continue by email.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="So just to recap, I’ll be sending the secure checkout/order details to your email. Please review everything first, and once completed, you can reply to my email so I can help with the next step.&#10;&#10;Before I let you go, is there anything else I can quickly assist you with today?&#10;&#10;Alright, thank you so much for your time. I’ll send the follow-up email shortly with the order details and next steps. You can reply there once you’re ready. Have a great day!" data-copy-label="AHT Call Control - Smooth Call Closing After Email Transition copied">Copy</button>
+                </div>
+                <pre>So just to recap, I’ll be sending the secure checkout/order details to your email. Please review everything first, and once completed, you can reply to my email so I can help with the next step.
+
+Before I let you go, is there anything else I can quickly assist you with today?
+
+Alright, thank you so much for your time. I’ll send the follow-up email shortly with the order details and next steps. You can reply there once you’re ready. Have a great day!</pre>
+              </article>
+              <article class="note-template-card flow-script-card aht-script-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>AHT Call Control - Add Remaining Info to Follow-Up Email</strong>
+                    <span>Use when the customer asks another question while you are already transitioning to email.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I completely understand. To make sure I don’t miss any details and so you have everything in writing, I’ll include that information in my follow-up email as well. That way, you can review everything clearly, and we can continue from there." data-copy-label="AHT Call Control - Add Remaining Info to Follow-Up Email copied">Copy</button>
+                </div>
+                <pre>I completely understand. To make sure I don’t miss any details and so you have everything in writing, I’ll include that information in my follow-up email as well. That way, you can review everything clearly, and we can continue from there.</pre>
+              </article>
+            </section>
+          </div>
+
+
+            <div class="section-band voice-spiel-band">
+              <h3>Voice Call Spiels / Ready Lines</h3>
+              <span>Voicemail + common voice scenarios</span>
+            </div>
+            <section class="script-bank voice-spiel-script-bank" aria-label="Voice call spiels and ready lines">
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Callback Voicemail</strong>
+                    <span>Use when you tried calling the customer back and reached their voicemail.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Hi, this is Medify Air Customer Support. We’re sorry we weren’t able to reach you today.&#10;&#10;If you still need assistance, please feel free to call us back at 1-888-258-1008. Our business hours are Monday through Friday from 9 AM to 9 PM, and Saturday from 9 AM to 6 PM.&#10;&#10;You may also email us at info@medifyair.com, and we’ll be happy to help.&#10;&#10;Thank you, and have a great day." data-copy-label="Callback Voicemail copied">Copy</button>
+                </div>
+                <pre>Hi, this is Medify Air Customer Support. We’re sorry we weren’t able to reach you today.
+
+If you still need assistance, please feel free to call us back at 1-888-258-1008. Our business hours are Monday through Friday from 9 AM to 9 PM, and Saturday from 9 AM to 6 PM.
+
+You may also email us at info@medifyair.com, and we’ll be happy to help.
+
+Thank you, and have a great day.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Follow-Up Call Voicemail</strong>
+                    <span>Use when you called the customer back for an existing concern or ticket and reached voicemail.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your recent concern. Please don’t hesitate to call us back at 888-258-1008, or you may also send us an email at info@medifyair.com. Our business hours are Monday through Friday from 9:00 AM to 9:00 PM, and Saturday from 9:00 AM to 6:00 PM. Thank you, and have a great day." data-copy-label="Follow-Up Call Voicemail copied">Copy</button>
+                </div>
+                <pre>Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your recent concern. Please don’t hesitate to call us back at 888-258-1008, or you may also send us an email at info@medifyair.com. Our business hours are Monday through Friday from 9:00 AM to 9:00 PM, and Saturday from 9:00 AM to 6:00 PM. Thank you, and have a great day.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Order Follow-Up Voicemail</strong>
+                    <span>Use when following up about an order, draft, invoice, or checkout link.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your order. I’ll also send you an email with the details, so you can review everything when you have a chance. Please don’t hesitate to call us back at 888-258-1008, or send us an email at info@medifyair.com. Our business hours are Monday through Friday from 9:00 AM to 9:00 PM, and Saturday from 9:00 AM to 6:00 PM. Thank you, and have a great day." data-copy-label="Order Follow-Up Voicemail copied">Copy</button>
+                </div>
+                <pre>Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your order. I’ll also send you an email with the details, so you can review everything when you have a chance. Please don’t hesitate to call us back at 888-258-1008, or send us an email at info@medifyair.com. Our business hours are Monday through Friday from 9:00 AM to 9:00 PM, and Saturday from 9:00 AM to 6:00 PM. Thank you, and have a great day.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>UPS Claim Follow-Up Voicemail</strong>
+                    <span>Use when following up about a lost, damaged, or investigation claim.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your UPS claim. I’ll send you an email with the current update, and you may reply there if you have any questions or additional information to provide. You can also call us back at 888-258-1008 or email us at info@medifyair.com during our business hours. Thank you, and have a great day." data-copy-label="UPS Claim Follow-Up Voicemail copied">Copy</button>
+                </div>
+                <pre>Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your UPS claim. I’ll send you an email with the current update, and you may reply there if you have any questions or additional information to provide. You can also call us back at 888-258-1008 or email us at info@medifyair.com during our business hours. Thank you, and have a great day.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Warranty Follow-Up Voicemail</strong>
+                    <span>Use when following up about a warranty case, video, photo, proof of purchase, or next steps.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your warranty concern. I’ll also send you an email with the details and next steps, so you can review everything there. Please don’t hesitate to call us back at 888-258-1008, or send us an email at info@medifyair.com. Thank you, and have a great day." data-copy-label="Warranty Follow-Up Voicemail copied">Copy</button>
+                </div>
+                <pre>Hi, this is Cjei from Medify Air. I’m calling to follow up regarding your warranty concern. I’ll also send you an email with the details and next steps, so you can review everything there. Please don’t hesitate to call us back at 888-258-1008, or send us an email at info@medifyair.com. Thank you, and have a great day.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Account Verification</strong>
+                    <span>Use early in the call before checking order, subscription, warranty, or account details.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I can definitely check that for you. To make sure I’m looking at the correct account, may I please have the email address or order number associated with the order?" data-copy-label="Account Verification copied">Copy</button>
+                </div>
+                <pre>I can definitely check that for you. To make sure I’m looking at the correct account, may I please have the email address or order number associated with the order?</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Permission to Hold</strong>
+                    <span>Use before placing the customer on hold while you check systems or create an order.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Thank you for that information. I’ll need a moment to review the details and make sure I’m giving you the correct information. Would it be okay if I place you on a brief hold?" data-copy-label="Permission to Hold copied">Copy</button>
+                </div>
+                <pre>Thank you for that information. I’ll need a moment to review the details and make sure I’m giving you the correct information. Would it be okay if I place you on a brief hold?</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Back From Hold</strong>
+                    <span>Use when returning from hold, especially if the hold took longer than expected.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Thank you so much for waiting, and I really appreciate your patience. I was able to check the details for you." data-copy-label="Back From Hold copied">Copy</button>
+                </div>
+                <pre>Thank you so much for waiting, and I really appreciate your patience. I was able to check the details for you.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Need More Time / Avoid Dead Air</strong>
+                    <span>Use when the system is loading or you need more time but do not want silence.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I’m still reviewing the details on my end. Thank you for your patience — I just want to make sure everything is accurate before I provide the next step." data-copy-label="Need More Time / Avoid Dead Air copied">Copy</button>
+                </div>
+                <pre>I’m still reviewing the details on my end. Thank you for your patience — I just want to make sure everything is accurate before I provide the next step.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>No Card Info Over the Phone</strong>
+                    <span>Use when the customer wants to provide payment details verbally.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="For your security, we’re not able to take card information over the phone. What I can do is send you a secure checkout link by email, and you can enter your payment information safely from there." data-copy-label="No Card Info Over the Phone copied">Copy</button>
+                </div>
+                <pre>For your security, we’re not able to take card information over the phone. What I can do is send you a secure checkout link by email, and you can enter your payment information safely from there.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Secure Checkout Link Recap</strong>
+                    <span>Use before ending a call after sending a draft order or invoice.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Just to recap, I sent the secure checkout link to your email. Please review the order details first, and once everything looks correct, you can complete the purchase through that link. After that, you can reply to my email with the order number so I can help with the next step." data-copy-label="Secure Checkout Link Recap copied">Copy</button>
+                </div>
+                <pre>Just to recap, I sent the secure checkout link to your email. Please review the order details first, and once everything looks correct, you can complete the purchase through that link. After that, you can reply to my email with the order number so I can help with the next step.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Shipping Timeframe After Order</strong>
+                    <span>Use after confirming an order has been placed or moved forward.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Once your order has been processed, it will be fulfilled and shipped within 1–3 business days, and delivered within 3–7 business days after shipment. You’ll receive an email confirmation once the order ships and tracking information is available." data-copy-label="Shipping Timeframe After Order copied">Copy</button>
+                </div>
+                <pre>Once your order has been processed, it will be fulfilled and shipped within 1–3 business days, and delivered within 3–7 business days after shipment. You’ll receive an email confirmation once the order ships and tracking information is available.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Subscription Activation Reminder</strong>
+                    <span>Use when sending a Filter Club activation request.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I also sent the subscription activation request to your email. Please review the details carefully before proceeding, and once everything looks correct, you can complete the activation through the link provided." data-copy-label="Subscription Activation Reminder copied">Copy</button>
+                </div>
+                <pre>I also sent the subscription activation request to your email. Please review the details carefully before proceeding, and once everything looks correct, you can complete the activation through the link provided.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Escalation / Email Follow-Up</strong>
+                    <span>Use when the concern needs further review and you need to continue by email.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I want to make sure this is handled correctly, so I’ll need to review this further with our team. I’ll send you a follow-up email with the next update, and you can reply there if you have any additional information to add." data-copy-label="Escalation / Email Follow-Up copied">Copy</button>
+                </div>
+                <pre>I want to make sure this is handled correctly, so I’ll need to review this further with our team. I’ll send you a follow-up email with the next update, and you can reply there if you have any additional information to add.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Previous Agent Unavailable</strong>
+                    <span>Use when the customer asks for another agent who is not available.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I understand you were working with them before. They may not be available at the moment, but I can still review the account notes and do my best to continue helping you from where things left off." data-copy-label="Previous Agent Unavailable copied">Copy</button>
+                </div>
+                <pre>I understand you were working with them before. They may not be available at the moment, but I can still review the account notes and do my best to continue helping you from where things left off.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Transfer Warm-Up</strong>
+                    <span>Use before transferring the customer to another agent or department.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I want to make sure you’re connected with the right support. I’ll transfer you now, and I’ll do my best to provide the next agent with the details so you don’t have to repeat everything." data-copy-label="Transfer Warm-Up copied">Copy</button>
+                </div>
+                <pre>I want to make sure you’re connected with the right support. I’ll transfer you now, and I’ll do my best to provide the next agent with the details so you don’t have to repeat everything.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Callback Offer</strong>
+                    <span>Use when the customer prefers not to wait or the concern needs more time.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I understand. If it’s more convenient, we can also follow up with you by email, or you may provide your preferred callback number and the best time for us to reach you." data-copy-label="Callback Offer copied">Copy</button>
+                </div>
+                <pre>I understand. If it’s more convenient, we can also follow up with you by email, or you may provide your preferred callback number and the best time for us to reach you.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Smooth End When Call Is Getting Long</strong>
+                    <span>Use when you already answered the main concern and need to wrap up professionally.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="I want to make sure I don’t keep you on the line longer than necessary. I’ll include the remaining details in my follow-up email, so you’ll have everything in writing and can reply there if anything needs to be adjusted." data-copy-label="Smooth End When Call Is Getting Long copied">Copy</button>
+                </div>
+                <pre>I want to make sure I don’t keep you on the line longer than necessary. I’ll include the remaining details in my follow-up email, so you’ll have everything in writing and can reply there if anything needs to be adjusted.</pre>
+              </article>
+              <article class="note-template-card flow-script-card voice-spiel-card">
+                <div class="note-template-card-head">
+                  <div>
+                    <strong>Avoid Saying ‘Actually’</strong>
+                    <span>Quick replacements when you catch yourself saying actually too often.</span>
+                  </div>
+                  <button class="note-template-copy" type="button" data-copy-text="Instead of saying “actually,” you can use: “Just to clarify,” “Upon checking,” “Based on what I’m seeing here,” “In this case,” “At this time,” or “What I can confirm is.”" data-copy-label="Avoid Saying ‘Actually’ copied">Copy</button>
+                </div>
+                <pre>Instead of saying “actually,” you can use: “Just to clarify,” “Upon checking,” “Based on what I’m seeing here,” “In this case,” “At this time,” or “What I can confirm is.”</pre>
+              </article>
+            </section>
+
+          <div class="voice-template-grid note-template-grid">
+            <article class="note-template-card voice-template-card voice-wide">
+              <div class="note-template-card-head">
+                <strong>For Voice Notes</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Spoke With: &#10;Name on the Account: &#10;Order Num: &#10;Email Address: &#10;Contact #: &#10;Reason for Calling:&#10;-&#10;ACTION TAKEN: &#10;-&#10;Offered FC/Cross Sell: &#10;AC Call ID:&#10;JA " data-copy-label="Voice notes copied">Copy</button>
+              </div>
+              <pre>Spoke With: 
+Name on the Account: 
+Order Num: 
+Email Address: 
+Contact #: 
+Reason for Calling:
+-
+ACTION TAKEN: 
+-
+Offered FC/Cross Sell: 
+AC Call ID:
+JA </pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>SMS Missed Call</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi! Thank you for contacting Medify Air. We&#x27;re sorry we missed your call. If you need additional help, please send us an email or don&#x27;t hesitate to call us back during our business hours. Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.&#10;&#10;Medify Air Customer Support Team&#10;Phone: 1-888-258-1008&#10;Email: info@medifyair.com" data-copy-label="SMS missed call copied">Copy</button>
+              </div>
+              <pre>Hi! Thank you for contacting Medify Air. We're sorry we missed your call. If you need additional help, please send us an email or don't hesitate to call us back during our business hours. Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.
+
+Medify Air Customer Support Team
+Phone: 1-888-258-1008
+Email: info@medifyair.com</pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>Outbound Email</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi,&#10;&#10;Good day to you! This is Cjei from Medify Air, and I hope that you&#x27;re having a great day so far. I noticed that we missed your call earlier, and I wanted to reach out to see if there&#x27;s anything we can do to assist you. I just wanted to let you know that our team is here to help in any way we can, so please don&#x27;t hesitate to let us know what you need.&#10;&#10;Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.&#10;&#10;Medify Air Customer Support Team&#10;Phone: 1-888-258-1008&#10;Email: info@medifyair.com&#10;&#10;Have a great day!&#10;&#10;Best," data-copy-label="Outbound email copied" data-copy-key="voice-outbound-email" data-mark-completed="true">Copy</button>
+              </div>
+              <pre>Hi,
+
+Good day to you! This is Cjei from Medify Air, and I hope that you're having a great day so far. I noticed that we missed your call earlier, and I wanted to reach out to see if there's anything we can do to assist you. I just wanted to let you know that our team is here to help in any way we can, so please don't hesitate to let us know what you need.
+
+Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.
+
+Medify Air Customer Support Team
+Phone: 1-888-258-1008
+Email: info@medifyair.com
+
+Have a great day!
+
+Best,</pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>Customer Requesting Previous Agent</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Customer is requesting for the previous agent:&#10;- If the agent being requested is available, transfer the call.&#10;- If the agent is engaged on a call or out of the office, offer assistance or ask the customer if he/she prefers to wait for the agent to become available and offer a callback.&#10;&#10;Please let us know if you have any questions. Thank you!" data-copy-label="Previous agent reminder copied">Copy</button>
+              </div>
+              <pre>Customer is requesting for the previous agent:
+- If the agent being requested is available, transfer the call.
+- If the agent is engaged on a call or out of the office, offer assistance or ask the customer if he/she prefers to wait for the agent to become available and offer a callback.
+
+Please let us know if you have any questions. Thank you!</pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>Disconnected / Cannot Reach Customer</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Sent SMS Missed Calls&#10;&#10;Hi! I apologize that our call got disconnected. I tried calling you back, but I cannot reach your number. You may send us an email or kindly provide your preferred contact number and the most convenient time for us to reach you. Thank you for your understanding!&#10;&#10;Medify Air Customer Support Team&#10;Phone: 1-888-258-1008&#10;Email: info@medifyair.com" data-copy-label="Cannot reach SMS copied">Copy</button>
+              </div>
+              <pre>Sent SMS Missed Calls
+
+Hi! I apologize that our call got disconnected. I tried calling you back, but I cannot reach your number. You may send us an email or kindly provide your preferred contact number and the most convenient time for us to reach you. Thank you for your understanding!
+
+Medify Air Customer Support Team
+Phone: 1-888-258-1008
+Email: info@medifyair.com</pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>Queue Busy / Agents Engaged</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Sent SMS Missed Calls&#10;&#10;Hi! We apologize for missing your call. All agents are currently engaged in a call. You may send us an email or if you would like us to return your call, kindly provide your preferred contact number and the most convenient time for us to reach you. Thank you for understanding!&#10;&#10;Medify Air Customer Support Team&#10;Phone: 1-888-258-1008&#10;Email: info@medifyair.com" data-copy-label="Queue busy SMS copied">Copy</button>
+              </div>
+              <pre>Sent SMS Missed Calls
+
+Hi! We apologize for missing your call. All agents are currently engaged in a call. You may send us an email or if you would like us to return your call, kindly provide your preferred contact number and the most convenient time for us to reach you. Thank you for understanding!
+
+Medify Air Customer Support Team
+Phone: 1-888-258-1008
+Email: info@medifyair.com</pre>
+            </article>
+            <article class="note-template-card voice-template-card ">
+              <div class="note-template-card-head">
+                <strong>Outside Operating Hours</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Sent SMS Missed Calls&#10;&#10;Hi! Thank you for contacting Medify Air. We&#x27;re sorry we missed your call. If you need additional help, please send us an email or don&#x27;t hesitate to call us back during our business hours. Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.&#10;&#10;Medify Air Customer Support Team&#10;Phone: 1-888-258-1008&#10;Email: info@medifyair.com" data-copy-label="Outside hours SMS copied">Copy</button>
+              </div>
+              <pre>Sent SMS Missed Calls
+
+Hi! Thank you for contacting Medify Air. We're sorry we missed your call. If you need additional help, please send us an email or don't hesitate to call us back during our business hours. Our operating hours are from 9am to 9pm on weekdays and 9am to 6pm on Saturdays.
+
+Medify Air Customer Support Team
+Phone: 1-888-258-1008
+Email: info@medifyair.com</pre>
+            </article>
+          </div>
+        </section>
+        <section id="l1chatsView" class="view l1-chat-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">L1 chat support</p>
+              <h2>L1 Chats</h2>
+              <p>Copy-ready live chat lines arranged in the usual flow: opening, assistance, acknowledgements, closings, not-replying follow-ups, and quick links.</p>
+            </div>
+            <span>Chat templates</span>
+          </div>
+
+          <div class="l1-template-grid note-template-grid">
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Opening</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hello there! Thank you for contacting Medify Air. My name is Cjei, and I will be assisting you today." data-copy-label="Opening copied">Copy</button>
+              </div>
+              <pre>Hello there! Thank you for contacting Medify Air. My name is Cjei, and I will be assisting you today.</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Assistance</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi! Thanks for reaching out to us! How can I help?" data-copy-label="Assistance copied">Copy</button>
+              </div>
+              <pre>Hi! Thanks for reaching out to us! How can I help?</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Follow up</strong>
+                <button class="note-template-copy" type="button" data-copy-text="I understand that [concern]. No worries! Let me help you with that." data-copy-label="Follow up copied">Copy</button>
+              </div>
+              <pre>I understand that [concern]. No worries! Let me help you with that.</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Acknowledgement 1</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Good question! Let me provide you with that information. To start, can you provide us with your email so we can send you a summary of our conversation after this chat?" data-copy-label="Acknowledgement 1 copied">Copy</button>
+              </div>
+              <pre>Good question! Let me provide you with that information. To start, can you provide us with your email so we can send you a summary of our conversation after this chat?</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Acknowledgement 2</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Before we start, can I have your email address? This way, I can take a look at your account and make sure we cover all your needs during our chat. I&#x27;d also love to send you a transcript afterwards so you can refer back to it anytime. Thanks," data-copy-label="Acknowledgement 2 copied">Copy</button>
+              </div>
+              <pre>Before we start, can I have your email address? This way, I can take a look at your account and make sure we cover all your needs during our chat. I&#x27;d also love to send you a transcript afterwards so you can refer back to it anytime. Thanks,</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Closing 1</strong>
+                <button class="note-template-copy" type="button" data-copy-text="I&#x27;m glad I was able to help you out today. Thank you so much for using Medify Air chat service. Stay safe!" data-copy-label="Closing 1 copied">Copy</button>
+              </div>
+              <pre>I&#x27;m glad I was able to help you out today. Thank you so much for using Medify Air chat service. Stay safe!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Closing 2</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Thanks for using Medify Air chat service. Stay safe!" data-copy-label="Closing 2 copied">Copy</button>
+              </div>
+              <pre>Thanks for using Medify Air chat service. Stay safe!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Closing - Holiday Special</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Thank you so much for using Medify Air chat service. Happy Holidays!" data-copy-label="Closing - Holiday Special copied">Copy</button>
+              </div>
+              <pre>Thank you so much for using Medify Air chat service. Happy Holidays!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Closing Question 1</strong>
+                <button class="note-template-copy" type="button" data-copy-text="In the meantime, will there be anything else I can assist you with today?" data-copy-label="Closing Question 1 copied">Copy</button>
+              </div>
+              <pre>In the meantime, will there be anything else I can assist you with today?</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Closing Question 2</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Do you have additional questions or concerns that you&#x27;d like me to assist you with today?" data-copy-label="Closing Question 2 copied">Copy</button>
+              </div>
+              <pre>Do you have additional questions or concerns that you&#x27;d like me to assist you with today?</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Not Replying</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi, I just want to make sure we&#x27;re still connected. Message me back once you&#x27;re available again. Thanks!" data-copy-label="Not Replying copied">Copy</button>
+              </div>
+              <pre>Hi, I just want to make sure we&#x27;re still connected. Message me back once you&#x27;re available again. Thanks!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Not Replying Follow-up 1 - No Email</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi. I can see you might be occupied with something else at the moment. Please feel free to reply here anytime or send us an email at info@medifyair.com. You may also visit our website at www.medifyair.com. If another agent should respond, they should be able to pick up exactly where we left off. Stay safe!" data-copy-label="Not Replying Follow-up 1 - No Email copied">Copy</button>
+              </div>
+              <pre>Hi. I can see you might be occupied with something else at the moment. Please feel free to reply here anytime or send us an email at info@medifyair.com. You may also visit our website at www.medifyair.com. If another agent should respond, they should be able to pick up exactly where we left off. Stay safe!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Not Replying Follow-up 2 - With Email</strong>
+                <button class="note-template-copy" type="button" data-copy-text="Hi. I can see you might be occupied with something else at the moment. Please feel free to reply here anytime or send us an email at info@medifyair.com. You may also visit our website at www.medifyair.com. I will email you a summary of our conversation today. If another agent should respond, they should be able to pick up exactly where we left off. Stay safe!" data-copy-label="Not Replying Follow-up 2 - With Email copied">Copy</button>
+              </div>
+              <pre>Hi. I can see you might be occupied with something else at the moment. Please feel free to reply here anytime or send us an email at info@medifyair.com. You may also visit our website at www.medifyair.com. I will email you a summary of our conversation today. If another agent should respond, they should be able to pick up exactly where we left off. Stay safe!</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Manage Subscription Quick Link</strong>
+                <button class="note-template-copy" type="button" data-copy-text="https://medifyair.com/tools/recurring/login" data-copy-label="Manage Subscription Quick Link copied">Copy</button>
+              </div>
+              <pre>https://medifyair.com/tools/recurring/login</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Warranty Quick Link</strong>
+                <button class="note-template-copy" type="button" data-copy-text="https://medifyair.com/pages/warranty" data-copy-label="Warranty Quick Link copied">Copy</button>
+              </div>
+              <pre>https://medifyair.com/pages/warranty</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Filter Club Quick Link</strong>
+                <button class="note-template-copy" type="button" data-copy-text="https://medifyair.com/pages/filterclub" data-copy-label="Filter Club Quick Link copied">Copy</button>
+              </div>
+              <pre>https://medifyair.com/pages/filterclub</pre>
+            </article>
+            <article class="note-template-card l1-template-card">
+              <div class="note-template-card-head">
+                <strong>Acknowledge with Closing</strong>
+                <button class="note-template-copy" type="button" data-copy-text="You are most welcome! Do you have additional questions or concerns that you&#x27;d like me to assist you with today?" data-copy-label="Acknowledge with Closing copied">Copy</button>
+              </div>
+              <pre>You are most welcome! Do you have additional questions or concerns that you&#x27;d like me to assist you with today?</pre>
+            </article>
+          </div>
+        </section>
+
+
+
+        <section id="ordersView" class="view workflow-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">Orders, shipping, returns</p>
+              <h2>Orders & Returns</h2>
+              <p>Use this when the customer asks about tracking, partial delivery, return labels, UPS pickup, refunds, wrong address, or missing packages.</p>
+            </div>
+            <span>Order flow</span>
+          </div>
+          <section class="flow-card">
+            <h3>Clean order flow</h3>
+            <ol class="flow-steps compact-steps">
+              <li><strong>1. Identify</strong><span>Order number, email, tracking number, SKU, and delivery address.</span></li>
+              <li><strong>2. Check package count</strong><span>Confirm if order has multiple packages before saying something is missing.</span></li>
+              <li><strong>3. Confirm carrier status</strong><span>Generated, on the way, delivered, damaged, lost claim, or return in transit.</span></li>
+              <li><strong>4. Set expectation</strong><span>Processing 1–3 business days, transit 3–7 business days, claim 8–10 business days when applicable.</span></li>
+              <li><strong>5. Copy note</strong><span>Save internal note with order ID, issue, action taken, and next step.</span></li>
+            </ol>
+          </section>
+          <div class="section-band"><h3>Copy-ready order replies</h3><span>Customer-facing templates</span></div>
+          <div class="script-bank">              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Partial Delivery / Missing Package</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. I’m sorry for the confusion.&#10;&#10;Your order was shipped in multiple packages, which is why only part of the order has arrived so far. The remaining package is still on the way and should be delivered soon.&#10;&#10;You may track the remaining shipment using the tracking number below:&#10;&#10;[Tracking Number]&#10;&#10;Please let us know if you have any other questions. We’re happy to assist.&#10;&#10;Thank you," data-copy-label="Partial Delivery / Missing Package copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. I’m sorry for the confusion.
+
+Your order was shipped in multiple packages, which is why only part of the order has arrived so far. The remaining package is still on the way and should be delivered soon.
+
+You may track the remaining shipment using the tracking number below:
+
+[Tracking Number]
+
+Please let us know if you have any other questions. We’re happy to assist.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Return Label + UPS Pickup</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for your patience. I’ve attached the prepaid return shipping label for your return. For your reference, your return tracking number is [Tracking Number].&#10;&#10;We also scheduled a UPS pickup for [Pickup Date].&#10;&#10;UPS Pickup #: [Pickup Number]&#10;Pickup Confirmation: [Confirmation Number]&#10;&#10;Please pack the item securely, print and attach the return label, and remove or cover any old waybills or shipping labels on the box to prevent UPS from scanning the incorrect label.&#10;&#10;Once our warehouse receives the package, we’ll process the refund right away.&#10;&#10;Thank you," data-copy-label="Return Label + UPS Pickup copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for your patience. I’ve attached the prepaid return shipping label for your return. For your reference, your return tracking number is [Tracking Number].
+
+We also scheduled a UPS pickup for [Pickup Date].
+
+UPS Pickup #: [Pickup Number]
+Pickup Confirmation: [Confirmation Number]
+
+Please pack the item securely, print and attach the return label, and remove or cover any old waybills or shipping labels on the box to prevent UPS from scanning the incorrect label.
+
+Once our warehouse receives the package, we’ll process the refund right away.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Tracking Generated / Order On The Way</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. I checked your order and the tracking number has already been generated. Your package is currently on the way.&#10;&#10;Tracking Number: [Tracking Number]&#10;Estimated Delivery: [Delivery Date/Time]&#10;&#10;You should also receive email updates once the carrier posts new progress.&#10;&#10;Thank you," data-copy-label="Tracking Generated / Order On The Way copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. I checked your order and the tracking number has already been generated. Your package is currently on the way.
+
+Tracking Number: [Tracking Number]
+Estimated Delivery: [Delivery Date/Time]
+
+You should also receive email updates once the carrier posts new progress.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Refund After Warehouse Receives Return</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for the update. Once our warehouse receives the returned package, we’ll process your refund immediately.&#10;&#10;We would also appreciate it if you could let us know once the package has been picked up or sent back so we can keep an eye on the return for you.&#10;&#10;Thank you," data-copy-label="Refund After Warehouse Receives Return copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for the update. Once our warehouse receives the returned package, we’ll process your refund immediately.
+
+We would also appreciate it if you could let us know once the package has been picked up or sent back so we can keep an eye on the return for you.
+
+Thank you,</pre>
+              </article></div>
+        </section>
+
+        <section id="filterClubView" class="view workflow-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">Subscriptions</p>
+              <h2>Filter Club</h2>
+              <p>Use this for cancellations, charge-date changes, subscription vs one-time order concerns, cadence changes, and portal links.</p>
+            </div>
+            <span>FC workspace</span>
+          </div>
+          <section class="flow-card">
+            <h3>Filter Club save flow</h3>
+            <ol class="flow-steps compact-steps">
+              <li><strong>1. Acknowledge</strong><span>Confirm the request and avoid sounding pushy.</span></li>
+              <li><strong>2. Ask reason</strong><span>Reason helps us offer the right fix.</span></li>
+              <li><strong>3. Offer softer option</strong><span>Move charge date, skip, or adjust cadence if they do not need filters yet.</span></li>
+              <li><strong>4. Explain benefits</strong><span>Scheduled replacements and subscription savings.</span></li>
+              <li><strong>5. Confirm next step</strong><span>Proceed with cancellation or share the portal link.</span></li>
+            </ol>
+          </section>
+          <div class="info-strip">
+            <strong>Quick link:</strong>
+            <span>https://medifyair.com/tools/recurring/login</span>
+          </div>
+          <div class="section-band"><h3>Copy-ready Filter Club replies</h3><span>Warm + polite</span></div>
+          <div class="script-bank">              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Cancel Subscription + Save Option</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. We’re sorry to hear that you’d like to cancel your subscription.&#10;&#10;May we ask the reason for the cancellation? Your Filter Club subscription helps make sure you receive replacement filters on schedule, and it also gives you savings on your filter orders.&#10;&#10;If you don’t need filters yet, we can also help move your charge date further out instead. Please let us know if you’d still like us to proceed with the cancellation.&#10;&#10;You may also manage your subscription by logging in here:&#10;https://medifyair.com/tools/recurring/login&#10;&#10;Thank you," data-copy-label="Cancel Subscription + Save Option copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. We’re sorry to hear that you’d like to cancel your subscription.
+
+May we ask the reason for the cancellation? Your Filter Club subscription helps make sure you receive replacement filters on schedule, and it also gives you savings on your filter orders.
+
+If you don’t need filters yet, we can also help move your charge date further out instead. Please let us know if you’d still like us to proceed with the cancellation.
+
+You may also manage your subscription by logging in here:
+https://medifyair.com/tools/recurring/login
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Subscription vs One-Time Price Difference</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. I’m sorry for the confusion, and I understand that you intended to place a one-time order.&#10;&#10;Upon checking, the filters were processed under subscription pricing. To make sure the order does not move forward incorrectly, we have placed it on hold for now.&#10;&#10;Since subscription pricing is different from a one-time purchase, we’ve sent you a draft to complete the price difference. Once the payment has been completed and processed, we’ll restore the order so it can move forward as a one-time purchase, and we’ll also cancel the subscription so you do not receive any recurring orders moving forward.&#10;&#10;Please let us know once the payment has been made so we can proceed with the next steps.&#10;&#10;Thank you," data-copy-label="Subscription vs One-Time Price Difference copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. I’m sorry for the confusion, and I understand that you intended to place a one-time order.
+
+Upon checking, the filters were processed under subscription pricing. To make sure the order does not move forward incorrectly, we have placed it on hold for now.
+
+Since subscription pricing is different from a one-time purchase, we’ve sent you a draft to complete the price difference. Once the payment has been completed and processed, we’ll restore the order so it can move forward as a one-time purchase, and we’ll also cancel the subscription so you do not receive any recurring orders moving forward.
+
+Please let us know once the payment has been made so we can proceed with the next steps.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Move Charge Date</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. If you do not need your replacement filters yet, we can help move your next charge date further out to a date that works better for you.&#10;&#10;Please let us know your preferred charge date, and we’ll be happy to update it for you.&#10;&#10;Thank you," data-copy-label="Move Charge Date copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. If you do not need your replacement filters yet, we can help move your next charge date further out to a date that works better for you.
+
+Please let us know your preferred charge date, and we’ll be happy to update it for you.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Manage Subscription Link</strong><button class="note-template-copy" type="button" data-copy-text="You may manage your subscription by logging in here:&#10;&#10;https://medifyair.com/tools/recurring/login" data-copy-label="Manage Subscription Link copied">Copy</button></div>
+                <pre>You may manage your subscription by logging in here:
+
+https://medifyair.com/tools/recurring/login</pre>
+              </article></div>
+        </section>
+
+        <section id="troubleshootingView" class="view workflow-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">Model help</p>
+              <h2>Troubleshooting</h2>
+              <p>Use this when a customer reports no power, clicking, red indicator, filter reset, fan issue, or model-specific questions.</p>
+            </div>
+            <span>Model steps</span>
+          </div>
+          <section class="flow-card">
+            <h3>Safe troubleshooting flow</h3>
+            <ol class="flow-steps compact-steps">
+              <li><strong>1. Confirm model</strong><span>Ask for model/SKU if the customer is unsure.</span></li>
+              <li><strong>2. Ask what changed</strong><span>New filter, moved unit, power outage, unusual sound, light indicator, or no airflow.</span></li>
+              <li><strong>3. Try basic reset</strong><span>Power off, unplug 30–45 seconds, reseat filter/panel, then test again.</span></li>
+              <li><strong>4. Request proof if needed</strong><span>5–8 second video showing the issue and what happens after pressing the button.</span></li>
+              <li><strong>5. Move to warranty</strong><span>Proof of purchase + registration + video if issue remains.</span></li>
+            </ol>
+          </section>
+          <div class="model-grid">
+            <article class="model-card"><strong>MA-25</strong><p>Filter reset: press and hold the Dimmer button for 3–5 seconds.
+Clicking/no lights: run without filter, reseat filter, complete tissue test, and request a 5–8 second video if needed.</p></article><article class="model-card"><strong>MA-35</strong><p>Fan/no power: power reset, tissue test, run without filter, check for coil whine, and request a 5–8 second video if needed. Auto Mode reads TVOC/PM2.5.</p></article><article class="model-card"><strong>MA-40</strong><p>No power: check the back panel magnet/latch and complete a 30–45 second power reset. Latest MA-40 reset: hold Replace Filter for 3–5 seconds. MA-40 UV reset: hold Fan + Ionizer for 3–5 seconds.</p></article><article class="model-card"><strong>MA-50 V3</strong><p>Filter upgrade/fit: insert square, press back upper-left, place unit on side, close until beep, power reset 30–45 seconds, then tissue test. Filter reset: hold Dimmer for 3 seconds.</p></article><article class="model-card"><strong>MA-112</strong><p>Filter reset: hold Ionizer for 3 seconds. MA-112 Pro has no UV or ionizer. Check model/version before giving UV or ionizer steps.</p></article><article class="model-card"><strong>MA-15 Smart</strong><p>Red UV/filter indicator: replace filter, then hold Timer + UV for 3–5 seconds. MA-15 Smart has no Dimmer button; UV button doubles as filter indicator.</p></article>
+          </div>
+        </section>
+
+        <section id="productInfoView" class="view workflow-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">Coverage & product facts</p>
+              <h2>Product Info</h2>
+              <p>Use this for room fit, coverage, discontinued models, filter compatibility, H13/H14, ionizer, UV, and product comparison questions.</p>
+            </div>
+            <span>Room fit</span>
+          </div>
+          <section class="flow-card">
+            <h3>Room size quick math</h3>
+            <p class="plain-note">Square feet tells the floor area. Cubic feet tells the air volume.</p>
+            <div class="formula-row"><strong>cubic ft = sq ft × ceiling height</strong><span>413 sq ft × 8 ft = 3,304 cu ft • 413 sq ft × 9 ft = 3,717 cu ft</span></div>
+          </section>
+          <div class="coverage-grid">
+            <article><strong>MA-14</strong><span>213 sq ft</span></article>
+            <article><strong>MA-15</strong><span>293 sq ft</span></article>
+            <article><strong>MA-22</strong><span>278 sq ft</span></article>
+            <article><strong>MA-25</strong><span>413 sq ft</span></article>
+            <article><strong>MA-35</strong><span>656 sq ft</span></article>
+            <article><strong>MA-40</strong><span>896 sq ft</span></article>
+            <article><strong>MA-50 V3</strong><span>1,320 sq ft</span></article>
+            <article><strong>MA-112</strong><span>2,228 sq ft</span></article>
+            <article><strong>MA-112 PRO</strong><span>2,974 sq ft</span></article>
+            <article><strong>MA-1400 PRO</strong><span>1,848 sq ft / 12 min</span></article>
+          </div>
+          <div class="section-band"><h3>Copy-ready product replies</h3><span>Room fit + product details</span></div>
+          <div class="script-bank">              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Room Fit Reply</strong><button class="note-template-copy" type="button" data-copy-text="Hi [Name],&#10;&#10;Thank you for reaching out. I’d be happy to help with this.&#10;&#10;Based on the room size you provided, your room is approximately [Length] x [Width] ft, which is about [Square Feet] sq ft. The [Model] can cover up to [Coverage] sq ft, so it should be a good fit for your room.&#10;&#10;Please keep in mind that coverage can vary depending on ceiling height, room layout, airflow, and whether doors are kept open or closed, but based on the square footage, the unit should work well for that space.&#10;&#10;Thank you," data-copy-label="Room Fit Reply copied">Copy</button></div>
+                <pre>Hi [Name],
+
+Thank you for reaching out. I’d be happy to help with this.
+
+Based on the room size you provided, your room is approximately [Length] x [Width] ft, which is about [Square Feet] sq ft. The [Model] can cover up to [Coverage] sq ft, so it should be a good fit for your room.
+
+Please keep in mind that coverage can vary depending on ceiling height, room layout, airflow, and whether doors are kept open or closed, but based on the square footage, the unit should work well for that space.
+
+Thank you,</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>H13 vs H14</strong><button class="note-template-copy" type="button" data-copy-text="H13 filters capture 99.9% of particles down to 0.1 microns. H14 filters are denser and offer higher capture efficiency, though airflow may feel slightly different and the unit may sound a bit louder depending on the model and fan speed." data-copy-label="H13 vs H14 copied">Copy</button></div>
+                <pre>H13 filters capture 99.9% of particles down to 0.1 microns. H14 filters are denser and offer higher capture efficiency, though airflow may feel slightly different and the unit may sound a bit louder depending on the model and fan speed.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card ">
+                <div class="note-template-card-head"><strong>Discontinued Model Reassurance</strong><button class="note-template-copy" type="button" data-copy-text="The reason you are no longer seeing this unit on our website is that the model has been discontinued as part of its planned product lifecycle. However, we want to reassure you that we will continue to carry replacement filters to support customers who already own this model." data-copy-label="Discontinued Model Reassurance copied">Copy</button></div>
+                <pre>The reason you are no longer seeing this unit on our website is that the model has been discontinued as part of its planned product lifecycle. However, we want to reassure you that we will continue to carry replacement filters to support customers who already own this model.</pre>
+              </article></div>
+          <div class="quick-jump-panel">
+            <button class="secondary-action" type="button" data-view="tools" data-tool-focus="purifierCompare">Open Purifier Compare</button>
+            <button class="secondary-action" type="button" data-view="manuals">Open Manuals & Warranty</button>
+          </div>
+        </section>
+        <section id="purifierScriptView" class="view workflow-page purifier-script-page">
+          <div class="section-heading page-hero-heading">
+            <div>
+              <p class="section-kicker">Recommendation guide</p>
+              <h2>Purifier Scripts</h2>
+              <p>Use this for recommending Medify air purifiers by room size, customer concern, and model strengths.</p>
+            </div>
+            <span>Call-friendly</span>
+          </div>
+
+          <section class="flow-card">
+            <h3>Call flow</h3>
+            <ol class="flow-steps compact-steps">
+              <li><strong>1. Ask room size</strong><span>“May I ask the room size or approximate square footage?”</span></li>
+              <li><strong>2. Ask main concern</strong><span>Allergies, pets, dust, smoke, odor, wildfire smoke, or general air quality.</span></li>
+              <li><strong>3. Match the model</strong><span>Recommend based on coverage and where the unit will be used.</span></li>
+              <li><strong>4. Mention filters</strong><span>Explain True HEPA H13 + activated carbon in simple customer language.</span></li>
+              <li><strong>5. Close confidently</strong><span>Confirm why the recommended model fits their space.</span></li>
+            </ol>
+          </section>
+
+          <div class="coverage-grid">
+            <article><strong>MA-14</strong><span>213 sq ft / 30 min</span></article>
+            <article><strong>MA-22</strong><span>278 sq ft / 30 min</span></article>
+            <article><strong>MA-25</strong><span>413 sq ft / 30 min</span></article>
+            <article><strong>MA-35</strong><span>656 sq ft / 30 min</span></article>
+            <article><strong>MA-40</strong><span>896 sq ft / 30 min</span></article>
+            <article><strong>MA-50 V3.0</strong><span>1,320 sq ft / 30 min</span></article>
+            <article><strong>MA-112</strong><span>2,228 sq ft / 30 min</span></article>
+            <article><strong>MA-112 PRO</strong><span>2,974 sq ft / 30 min</span></article>
+          </div>
+
+          <div class="section-band"><h3>Quick copy call lines</h3><span>Opening + explanation + close</span></div>
+          <div class="script-bank purifier-general-script-bank">
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Full Recommendation Script</strong><button class="note-template-copy" type="button" data-copy-text="Opening:&#10;“Absolutely, I’d be happy to help recommend the best air purifier for your space. May I ask about the room size and your main concern — allergies, pets, dust, smoke, odor, wildfire smoke, or overall air quality?”&#10;&#10;Explain:&#10;“All Medify air purifier units are equipped with True HEPA and activated carbon filters. The pre-filter helps capture larger particles like hair, fibers, and dander, the True HEPA H13 filter material is tested to capture 99.97% of airborne particles from 0.1 to 0.3 microns, and the carbon filter helps reduce odors and smoke.”&#10;&#10;Recommend by room size:&#10;“For smaller rooms, I’d usually look at the MA-14 or MA-22. For bedrooms, nurseries, home offices, or medium rooms, the MA-25 is a great everyday option. For wall-mounted placement or saving floor space, the MA-35 is a strong choice. For large rooms, the MA-40 would be a great option. For extra-large or open spaces, I’d look at the MA-50 V3.0. For very large or commercial-style areas, I’d recommend the MA-112 or MA-112 PRO.”&#10;&#10;Close:&#10;“Based on the room size and what you’re trying to target, I’d recommend the [MODEL]. It gives you enough coverage for your space and includes True HEPA filtration, activated carbon for odors and smoke, and the features that should work well for your needs.”&#10;&#10;Filter Club mention:&#10;“You can also add our Filter Club option if you’d like replacement filters delivered automatically. It helps make sure you always have the right filter on schedule, and it can also help you save on filter deliveries.”&#10;&#10;Safe disclaimer:&#10;“An air purifier can help reduce airborne particles and improve indoor air quality, but it does not replace regular cleaning, proper ventilation, or medical advice/treatment for allergy, asthma, or respiratory concerns.”" data-copy-label="Full Recommendation Script copied">Copy</button></div>
+                <pre>Opening:
+“Absolutely, I’d be happy to help recommend the best air purifier for your space. May I ask about the room size and your main concern — allergies, pets, dust, smoke, odor, wildfire smoke, or overall air quality?”
+
+Explain:
+“All Medify air purifier units are equipped with True HEPA and activated carbon filters. The pre-filter helps capture larger particles like hair, fibers, and dander, the True HEPA H13 filter material is tested to capture 99.97% of airborne particles from 0.1 to 0.3 microns, and the carbon filter helps reduce odors and smoke.”
+
+Recommend by room size:
+“For smaller rooms, I’d usually look at the MA-14 or MA-22. For bedrooms, nurseries, home offices, or medium rooms, the MA-25 is a great everyday option. For wall-mounted placement or saving floor space, the MA-35 is a strong choice. For large rooms, the MA-40 would be a great option. For extra-large or open spaces, I’d look at the MA-50 V3.0. For very large or commercial-style areas, I’d recommend the MA-112 or MA-112 PRO.”
+
+Close:
+“Based on the room size and what you’re trying to target, I’d recommend the [MODEL]. It gives you enough coverage for your space and includes True HEPA filtration, activated carbon for odors and smoke, and the features that should work well for your needs.”
+
+Filter Club mention:
+“You can also add our Filter Club option if you’d like replacement filters delivered automatically. It helps make sure you always have the right filter on schedule, and it can also help you save on filter deliveries.”
+
+Safe disclaimer:
+“An air purifier can help reduce airborne particles and improve indoor air quality, but it does not replace regular cleaning, proper ventilation, or medical advice/treatment for allergy, asthma, or respiratory concerns.”</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Opening Question</strong><button class="note-template-copy" type="button" data-copy-text="Absolutely, I’d be happy to help recommend the best air purifier for your space. May I ask about the room size and your main concern — allergies, pets, dust, smoke, odor, wildfire smoke, or overall air quality?&#10;&#10;Once I have the room size and concern, I can help match you with the right model so the unit is not too small for the space." data-copy-label="Opening Question copied">Copy</button></div>
+                <pre>Absolutely, I’d be happy to help recommend the best air purifier for your space. May I ask about the room size and your main concern — allergies, pets, dust, smoke, odor, wildfire smoke, or overall air quality?
+
+Once I have the room size and concern, I can help match you with the right model so the unit is not too small for the space.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Simple Filter Explanation</strong><button class="note-template-copy" type="button" data-copy-text="All Medify air purifier units are equipped with True HEPA and activated carbon filters. The pre-filter helps capture larger particles like hair, fibers, and dander, the True HEPA H13 filter material is tested to capture 99.97% of airborne particles from 0.1 to 0.3 microns, and the carbon filter helps reduce odors and smoke.&#10;&#10;The best model depends on the room size, how quickly you want the air cleaned, and the type of air quality concern you are trying to improve." data-copy-label="Simple Filter Explanation copied">Copy</button></div>
+                <pre>All Medify air purifier units are equipped with True HEPA and activated carbon filters. The pre-filter helps capture larger particles like hair, fibers, and dander, the True HEPA H13 filter material is tested to capture 99.97% of airborne particles from 0.1 to 0.3 microns, and the carbon filter helps reduce odors and smoke.
+
+The best model depends on the room size, how quickly you want the air cleaned, and the type of air quality concern you are trying to improve.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Quick Model Ladder</strong><button class="note-template-copy" type="button" data-copy-text="For smaller rooms, I would usually look at the MA-14 or MA-22.&#10;&#10;For bedrooms, nurseries, home offices, or medium rooms, the MA-25 is a great everyday option.&#10;&#10;For wall-mounted placement or saving floor space, the MA-35 is a strong choice.&#10;&#10;For large bedrooms, living rooms, offices, or classrooms, I would recommend the MA-40.&#10;&#10;For extra-large rooms or open spaces, the MA-50 V3.0 is a stronger option.&#10;&#10;For very large spaces, open floor plans, offices, gyms, schools, or commercial-style areas, I would recommend the MA-112 or MA-112 PRO." data-copy-label="Quick Model Ladder copied">Copy</button></div>
+                <pre>For smaller rooms, I would usually look at the MA-14 or MA-22.
+
+For bedrooms, nurseries, home offices, or medium rooms, the MA-25 is a great everyday option.
+
+For wall-mounted placement or saving floor space, the MA-35 is a strong choice.
+
+For large bedrooms, living rooms, offices, or classrooms, I would recommend the MA-40.
+
+For extra-large rooms or open spaces, the MA-50 V3.0 is a stronger option.
+
+For very large spaces, open floor plans, offices, gyms, schools, or commercial-style areas, I would recommend the MA-112 or MA-112 PRO.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Closing Recommendation</strong><button class="note-template-copy" type="button" data-copy-text="Based on the room size and what you are trying to target, I would recommend the [MODEL]. It gives you enough coverage for your space and includes True HEPA H13 filtration, activated carbon for odors and smoke, and features that should work well for your needs.&#10;&#10;You can also add our Filter Club option if you would like the replacement filters delivered automatically. It helps make sure you always have the right filter on schedule, and it can also help you save on filter deliveries." data-copy-label="Closing Recommendation copied">Copy</button></div>
+                <pre>Based on the room size and what you are trying to target, I would recommend the [MODEL]. It gives you enough coverage for your space and includes True HEPA H13 filtration, activated carbon for odors and smoke, and features that should work well for your needs.
+
+You can also add our Filter Club option if you would like the replacement filters delivered automatically. It helps make sure you always have the right filter on schedule, and it can also help you save on filter deliveries.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>Safe Disclaimer</strong><button class="note-template-copy" type="button" data-copy-text="Just a quick note: an air purifier can help reduce airborne particles and improve indoor air quality, but it does not replace regular cleaning, proper ventilation, or medical advice/treatment for allergy, asthma, or respiratory concerns." data-copy-label="Safe Disclaimer copied">Copy</button></div>
+                <pre>Just a quick note: an air purifier can help reduce airborne particles and improve indoor air quality, but it does not replace regular cleaning, proper ventilation, or medical advice/treatment for allergy, asthma, or respiratory concerns.</pre>
+              </article>
+          </div>
+
+          <div class="section-band"><h3>Model-by-model recommendation lines</h3><span>Copy one during a call</span></div>
+          <div class="script-bank purifier-model-script-bank">
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-14</strong><button class="note-template-copy" type="button" data-copy-text="MA-14 — Best for small rooms, bedrooms, dorms, offices, or personal spaces. It can clean up to 213 sq ft in 30 minutes, has 3 fan speeds, sleep mode, UV light, and a filter indicator. It is compact, easy to place, and a good starter option for dust, pollen, pet dander, and light smoke." data-copy-label="MA-14 copied">Copy</button></div>
+                <pre>MA-14 — Best for small rooms, bedrooms, dorms, offices, or personal spaces. It can clean up to 213 sq ft in 30 minutes, has 3 fan speeds, sleep mode, UV light, and a filter indicator. It is compact, easy to place, and a good starter option for dust, pollen, pet dander, and light smoke.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-22</strong><button class="note-template-copy" type="button" data-copy-text="MA-22 — Best for small to medium rooms when the customer wants a compact unit with a little more coverage than the MA-14. It can clean up to 278 sq ft in 30 minutes and has 3 fan speeds, preset timers, touch controls, child lock, and tempered glass touchscreen technology." data-copy-label="MA-22 copied">Copy</button></div>
+                <pre>MA-22 — Best for small to medium rooms when the customer wants a compact unit with a little more coverage than the MA-14. It can clean up to 278 sq ft in 30 minutes and has 3 fan speeds, preset timers, touch controls, child lock, and tempered glass touchscreen technology.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-25</strong><button class="note-template-copy" type="button" data-copy-text="MA-25 — Best for bedrooms, nurseries, home offices, apartments, and medium rooms. It can clean up to 413 sq ft in 30 minutes and has 3 fan speeds, preset timers, filter indicator, touch controls, child lock, and dimmer. It is a strong everyday recommendation for dust, pollen, pet dander, smoke, and general air quality." data-copy-label="MA-25 copied">Copy</button></div>
+                <pre>MA-25 — Best for bedrooms, nurseries, home offices, apartments, and medium rooms. It can clean up to 413 sq ft in 30 minutes and has 3 fan speeds, preset timers, filter indicator, touch controls, child lock, and dimmer. It is a strong everyday recommendation for dust, pollen, pet dander, smoke, and general air quality.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-35</strong><button class="note-template-copy" type="button" data-copy-text="MA-35 — Best when the customer wants wall-mounted placement or needs to save floor space. It can clean up to 656 sq ft in 30 minutes and has 3 fan speeds, preset timers, sleep mode, filter indicator, touch controls, child lock, and optional ionizer. It is a good fit for bedrooms, offices, kitchens, clinics, or rooms where a floor unit may get in the way." data-copy-label="MA-35 copied">Copy</button></div>
+                <pre>MA-35 — Best when the customer wants wall-mounted placement or needs to save floor space. It can clean up to 656 sq ft in 30 minutes and has 3 fan speeds, preset timers, sleep mode, filter indicator, touch controls, child lock, and optional ionizer. It is a good fit for bedrooms, offices, kitchens, clinics, or rooms where a floor unit may get in the way.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-40</strong><button class="note-template-copy" type="button" data-copy-text="MA-40 — Best for large bedrooms, living rooms, offices, classrooms, dorms, apartments, and pet-heavy spaces. It can clean up to 896 sq ft in 30 minutes and has 3 fan speeds, sleep mode, preset timers, filter indicator, touch controls, child lock, optional ionizer, and tempered glass touchscreen technology. It is one of the easiest large-room recommendations." data-copy-label="MA-40 copied">Copy</button></div>
+                <pre>MA-40 — Best for large bedrooms, living rooms, offices, classrooms, dorms, apartments, and pet-heavy spaces. It can clean up to 896 sq ft in 30 minutes and has 3 fan speeds, sleep mode, preset timers, filter indicator, touch controls, child lock, optional ionizer, and tempered glass touchscreen technology. It is one of the easiest large-room recommendations.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-50 V3.0</strong><button class="note-template-copy" type="button" data-copy-text="MA-50 V3.0 — Best for extra-large rooms, open spaces, offices, gyms, classrooms, and larger living areas. It can clean up to 1,320 sq ft in 30 minutes and has 4 fan speeds, a 2–12 hour timer, sleep mode, filter indicator, touch controls, child lock, and dimmer. Recommend this when the customer wants stronger coverage than the MA-40." data-copy-label="MA-50 V3.0 copied">Copy</button></div>
+                <pre>MA-50 V3.0 — Best for extra-large rooms, open spaces, offices, gyms, classrooms, and larger living areas. It can clean up to 1,320 sq ft in 30 minutes and has 4 fan speeds, a 2–12 hour timer, sleep mode, filter indicator, touch controls, child lock, and dimmer. Recommend this when the customer wants stronger coverage than the MA-40.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-112</strong><button class="note-template-copy" type="button" data-copy-text="MA-112 — Best for very large rooms, open floor plans, offices, gyms, clinics, classrooms, and shared spaces. It can clean up to 2,228 sq ft in 30 minutes and has 4 fan speeds, preset timers, sleep mode, filter indicator, touch controls, child lock, and wheels for easier movement." data-copy-label="MA-112 copied">Copy</button></div>
+                <pre>MA-112 — Best for very large rooms, open floor plans, offices, gyms, clinics, classrooms, and shared spaces. It can clean up to 2,228 sq ft in 30 minutes and has 4 fan speeds, preset timers, sleep mode, filter indicator, touch controls, child lock, and wheels for easier movement.</pre>
+              </article>
+              <article class="note-template-card workflow-copy-card purifier-script-card">
+                <div class="note-template-card-head"><strong>MA-112 PRO</strong><button class="note-template-copy" type="button" data-copy-text="MA-112 PRO — Best for maximum coverage and high-power cleaning. It can clean up to 2,974 sq ft in 30 minutes and has 4 fan speeds, a 2–12 hour timer, sleep mode, filter indicator, touch controls, child lock, and wheels. Recommend this for very large rooms, commercial spaces, offices, gyms, schools, or customers who want the strongest available option." data-copy-label="MA-112 PRO copied">Copy</button></div>
+                <pre>MA-112 PRO — Best for maximum coverage and high-power cleaning. It can clean up to 2,974 sq ft in 30 minutes and has 4 fan speeds, a 2–12 hour timer, sleep mode, filter indicator, touch controls, child lock, and wheels. Recommend this for very large rooms, commercial spaces, offices, gyms, schools, or customers who want the strongest available option.</pre>
+              </article>
+          </div>
+
+          <div class="quick-jump-panel">
+            <button class="secondary-action" type="button" data-view="productInfo">Open Product Info</button>
+            <button class="secondary-action" type="button" data-view="tools" data-tool-focus="purifierCompare">Open Purifier Compare</button>
+          </div>
+        </section>
+        <section id="promptsView" class="view prompt-page">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Copy-ready AI prompts</p>
+              <h2>ChatGPT Prompts</h2>
+              <p>Open ChatGPT in a new tab, copy a prompt below, then paste it there whenever you need help.</p>
+            </div>
+            <a class="secondary-link prompt-open-link" href="https://chatgpt.com/" target="_blank" rel="noreferrer">Open ChatGPT</a>
+          </div>
+
+          <div class="prompt-template-grid note-template-grid">
+            <article class="note-template-card prompt-template-card prompt-wide">
+              <div class="note-template-card-head">
+                <div>
+                  <strong>Accuracy Double-Check Mode</strong>
+                  <span>Use this when you want ChatGPT to be careful, skeptical, and honest.</span>
+                </div>
+                <button class="note-template-copy" type="button" data-copy-text="You are an expert who double-checks things. Be skeptical, but do your research. I&#x27;m not always right, but neither are you. We both strive for accuracy.&#10;&#10;When you answer:&#10;- Verify assumptions before agreeing.&#10;- Tell me when you are unsure.&#10;- Correct me respectfully if my understanding seems wrong.&#10;- Use current and reliable sources when facts may have changed.&#10;- Separate facts from guesses or opinions.&#10;- Give the most accurate answer, not just the answer I seem to want." data-copy-label="Accuracy prompt copied">Copy Prompt</button>
+              </div>
+              <pre>You are an expert who double-checks things. Be skeptical, but do your research. I'm not always right, but neither are you. We both strive for accuracy.
+
+When you answer:
+- Verify assumptions before agreeing.
+- Tell me when you are unsure.
+- Correct me respectfully if my understanding seems wrong.
+- Use current and reliable sources when facts may have changed.
+- Separate facts from guesses or opinions.
+- Give the most accurate answer, not just the answer I seem to want.</pre>
+            </article>
+
+            <article class="note-template-card prompt-template-card prompt-wide">
+              <div class="note-template-card-head">
+                <div>
+                  <strong>Chat Reply Generator</strong>
+                  <span>Use this when you paste customer chat notes and need a ready-to-send reply.</span>
+                </div>
+                <button class="note-template-copy" type="button" data-copy-text="Help me create a chat response I can copy and send.&#10;&#10;Use my rough notes below, fix typos, and turn them into a clear, friendly, professional chat reply. Keep it natural and concise, not robotic.&#10;&#10;Rules:&#10;- Acknowledge the customer&#x27;s concern.&#10;- Explain the answer clearly.&#10;- Include next steps if needed.&#10;- Do not invent policies, discounts, links, order details, or technical info.&#10;- If something important is missing, write a safe reply asking for the needed information.&#10;- Output the ready-to-send chat message only.&#10;&#10;Customer message / my notes:&#10;[paste the chat or details here]" data-copy-label="Chat reply prompt copied">Copy Prompt</button>
+              </div>
+              <pre>Help me create a chat response I can copy and send.
+
+Use my rough notes below, fix typos, and turn them into a clear, friendly, professional chat reply. Keep it natural and concise, not robotic.
+
+Rules:
+- Acknowledge the customer's concern.
+- Explain the answer clearly.
+- Include next steps if needed.
+- Do not invent policies, discounts, links, order details, or technical info.
+- If something important is missing, write a safe reply asking for the needed information.
+- Output the ready-to-send chat message only.
+
+Customer message / my notes:
+[paste the chat or details here]</pre>
+            </article>
+
+            <article class="note-template-card prompt-template-card prompt-wide">
+              <div class="note-template-card-head">
+                <div>
+                  <strong>Email Response Generator</strong>
+                  <span>Use this when you paste customer email notes and need a ready-to-send email reply.</span>
+                </div>
+                <button class="note-template-copy" type="button" data-copy-text="Help me create an email response I can copy and send.&#10;&#10;Use my rough notes below, fix typos, and turn them into a clear, friendly, professional customer email. Keep it natural, helpful, and not robotic.&#10;&#10;Rules:&#10;- Start by acknowledging the customer&#x27;s concern or request.&#10;- Explain the answer clearly and politely.&#10;- Include next steps, links, or instructions if I provided them.&#10;- Do not invent policies, discounts, links, order details, tracking, warranty decisions, or technical information.&#10;- Preserve any order number, email address, tracking number, product model, dates, and links I provide.&#10;- If something important is missing, write a safe email asking for the needed information.&#10;- Do not add a subject line unless I ask for one.&#10;- Output the ready-to-send email body only.&#10;&#10;Customer message / my notes:&#10;[paste the customer email and my rough notes here]" data-copy-label="Email response prompt copied">Copy Prompt</button>
+              </div>
+              <pre>Help me create an email response I can copy and send.
+
+Use my rough notes below, fix typos, and turn them into a clear, friendly, professional customer email. Keep it natural, helpful, and not robotic.
+
+Rules:
+- Start by acknowledging the customer&#x27;s concern or request.
+- Explain the answer clearly and politely.
+- Include next steps, links, or instructions if I provided them.
+- Do not invent policies, discounts, links, order details, tracking, warranty decisions, or technical information.
+- Preserve any order number, email address, tracking number, product model, dates, and links I provide.
+- If something important is missing, write a safe email asking for the needed information.
+- Do not add a subject line unless I ask for one.
+- Output the ready-to-send email body only.
+
+Customer message / my notes:
+[paste the customer email and my rough notes here]</pre>
+            </article>
+          </div>
+        </section>
+
+
+        <section id="faqsView" class="view faq-page">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Call and email answer library</p>
+              <h2>Customer Questions & Conversational Answers</h2>
+              <p>Search a customer’s question, then copy either a natural call response or a polished email response. Internal reminders are kept separate so they are never accidentally sent to the customer.</p>
+            </div>
+            <span id="faqCount"></span>
+          </div>
+          <div class="faq-source-note">
+            <strong>Last reviewed July 14, 2026</strong>
+            <span>Each question now includes a spoken call answer and an email-ready version. Recheck live policy pages before promising policy-sensitive details.</span>
+          </div>
+          <div class="faq-toolbar">
+            <label class="faq-search-label">
+              <span>Search FAQs</span>
+              <input id="faqSearch" type="search" placeholder="Try: discontinued, filter light, warranty, HSA/FSA, MA-25..." autocomplete="off" />
+            </label>
+            <label>
+              <span>Category</span>
+              <select id="faqCategory"></select>
+            </label>
+            <button id="clearFaqFilters" class="secondary-action" type="button">Clear filters</button>
+          </div>
+          <div id="faqChips" class="faq-chips" aria-label="Popular FAQ topics"></div>
+          <div id="faqList" class="faq-list"></div>
+        </section>
+
+        <section id="internalKbView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Knowledge base</p>
+              <h2>Medify Air Internal KB</h2>
+              <p>Search integrated Medify Air guides, policies, troubleshooting steps, SOPs, and support resources inside this dashboard.</p>
+            </div>
+            <span id="internalKbCount"></span>
+          </div>
+          <div class="kb-toolbar">
+            <label class="search-box">
+              <span>Search Internal KB</span>
+              <input id="kbSearch" type="search" placeholder="Search warranty, missing package, Recharge, MA-40, UV, SOP..." autocomplete="off" />
+            </label>
+            <select id="kbCategorySelect" aria-label="Filter internal KB by category"></select>
+            <select id="kbTagSelect" aria-label="Filter internal KB by tag"></select>
+            <button class="secondary-action" id="clearKbFilters" type="button">Clear filters</button>
+          </div>
+          <div id="kbChips" class="chip-row"></div>
+          <a class="kb-open-card" href="https://sites.google.com/wagmisolutions.io/medify-air-internal-kb/home" target="_blank" rel="noreferrer">
+            <span class="card-icon">KB</span>
+            <span>
+              <strong>Open Original KB</strong>
+              <small>Optional source link for screenshots and original Google Sites pages. Searchable article content is integrated below.</small>
+            </span>
+            <svg class="external-icon" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M14 4h6v6m0-6-9 9" />
+              <path d="M20 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h5" />
+            </svg>
+          </a>
+          <div id="internalKbList" class="knowledge-results"></div>
+        </section>
+
+        <section id="manualsView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Documents</p>
+              <h2>Manuals & Warranty</h2>
+              <p>Find Medify manuals, product documents, warranty notes, and source pages.</p>
+            </div>
+            <span id="manualsCount"></span>
+          </div>
+          <div class="manuals-toolbar">
+            <label>
+              <span>Find unit</span>
+              <input id="manualSearch" type="search" placeholder="Search MA-40, UV, PRO, H14..." />
+            </label>
+            <a class="source-link" href="https://medifyair.com/pages/product-manuals" target="_blank" rel="noreferrer">Open Medify manuals page</a>
+          </div>
+          <div class="warranty-panel">
+            <h3>Limited Lifetime Warranty Notes</h3>
+            <ul id="warrantySummary"></ul>
+            <a href="https://medifyair.com/pages/lifetime-warranty" target="_blank" rel="noreferrer">Open warranty page</a>
+          </div>
+          <div id="manualCards" class="manual-grid"></div>
+        </section>
+
+        <section id="toolsView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Utilities</p>
+              <h2>Sheet Tools</h2>
+              <p>Use preserved formula helpers, ticket references, and lookup tools from the workbook.</p>
+            </div>
+            <span id="toolsCount"></span>
+          </div>
+          <div class="tool-grid">
+            <section class="tool-panel" id="replacementToolPanel">
+              <h3>Replacement Code Generator</h3>
+              <div class="generator-grid">
+                <label>
+                  <span>Reason</span>
+                  <select id="replacementReason"></select>
+                </label>
+                <label>
+                  <span>Order number</span>
+                  <input id="replacementOrder" type="text" placeholder="Optional order number" />
+                </label>
+              </div>
+              <div class="generated-code">
+                <span id="generatedCode"></span>
+                <button class="primary-action" id="copyGenerated" type="button">Copy</button>
+              </div>
+              <p class="formula-note" id="formulaNote"></p>
+            </section>
+            <section class="tool-panel wide-panel" id="purifierComparisonPanel">
+              <div class="comparison-heading">
+                <h3>Air Purifier Side-by-Side (All Models)</h3>
+                <a class="secondary-link" href="https://medifyair.com/collections/air-purifiers" target="_blank" rel="noreferrer">Open source</a>
+              </div>
+              <p class="formula-note">Current models were verified against MedifyAir.com on July 14, 2026. The MA-15 is retained as a clearly labeled legacy/discontinued reference using historical support data.</p>
+              <div class="comparison-controls">
+                <label>
+                  <span>Purifier 1</span>
+                  <select id="purifierCompareOne"></select>
+                </label>
+                <label>
+                  <span>Purifier 2</span>
+                  <select id="purifierCompareTwo"></select>
+                </label>
+                <label>
+                  <span>Purifier 3</span>
+                  <select id="purifierCompareThree"></select>
+                </label>
+              </div>
+              <div id="purifierComparisonTable" class="comparison-table-wrap"></div>
+            </section>
+            <section class="tool-panel wide-panel">
+              <h3>Product Dimensions & Specs</h3>
+              <div class="unit-lookup">
+                <label>
+                  <span>Select unit</span>
+                  <select id="unitSelect"></select>
+                </label>
+                <label>
+                  <span>Filter units</span>
+                  <input id="unitSearch" type="search" placeholder="Type MA-40, MA-112, filter, white..." />
+                </label>
+              </div>
+              <div id="unitDetails" class="unit-details"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="favoritesView" class="view">
+          <div class="section-heading">
+            <div>
+              <p class="section-kicker">Personal shortcuts</p>
+              <h2>Saved Scripts</h2>
+              <p>Keep your most-used responses ready for faster customer support work.</p>
+            </div>
+            <span id="favoritesCount"></span>
+          </div>
+          <div id="favoritesList" class="cards"></div>
+        </section>
+      </section>
+    </main>
+
+
+    <button id="cjeiBotLauncher" class="cjei-bot-launcher" type="button" aria-label="Open Cjei search helper">
+      <img src="assets/cjei-search-bot.png" alt="Cjei search helper" />
+      <span>Search Helper</span>
+    </button>
+    <section id="cjeiBotPanel" class="cjei-bot-panel" aria-label="Cjei Work Hub search helper" hidden>
+      <button id="cjeiBotClose" class="cjei-bot-close" type="button" aria-label="Close search helper">×</button>
+      <div class="cjei-bot-panel-head">
+        <img src="assets/cjei-search-bot.png" alt="" aria-hidden="true" />
+        <div>
+          <strong>Hi, I’m Cjei Bot</strong>
+          <span>Click me anytime to search everything inside the hub.</span>
+        </div>
+      </div>
+      <label class="cjei-bot-search">
+        <span>What do you need?</span>
+        <input id="cjeiBotSearchInput" type="search" placeholder="Try: MA-40 UV, refund, warranty, missing package..." autocomplete="off" />
+      </label>
+      <div class="cjei-bot-actions">
+        <button type="button" data-bot-query="warranty">Warranty</button>
+        <button type="button" data-bot-query="refund">Refund</button>
+        <button type="button" data-bot-query="MA-40 UV">MA-40 UV</button>
+        <button type="button" data-bot-query="ticket link">Ticket Links</button>
+      </div>
+      <button id="cjeiBotSearchGo" class="cjei-bot-go" type="button">Search the hub</button>
+    </section>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <div id="ticketDrawerBackdrop" class="drawer-backdrop" hidden></div>
+    <aside id="detailDrawer" class="ticket-drawer" aria-hidden="true" aria-label="Details">
+      <button class="drawer-close" id="closeDetailDrawer" type="button" aria-label="Close details">Close</button>
+      <div id="detailDrawerContent"></div>
+    </aside>
+    <script src="data.js"></script>
+    <script src="medify_manuals.js"></script>
+    <script src="internal_kb.js"></script>
+    <script src="support_library.js"></script>
+    <script src="faq_data.js"></script>
+    <script src="focus_music.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
