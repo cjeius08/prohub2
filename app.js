@@ -1930,87 +1930,17 @@ function updateSections() {
 }
 
 
-const CLICK_ANIMATION_SELECTOR = [
-  "button",
-  "a",
-  ".chip",
-  ".dashboard-card",
-  ".note-template-card",
-  ".manual-card",
-  ".tool-card",
-  ".ticket-card",
-  ".card",
-  "[data-view]",
-  "[data-copy]",
-  "[data-copy-text]",
-  "[data-save]"
-].join(", ");
-
-function animateClick(event) {
-  const target = event.target.closest(CLICK_ANIMATION_SELECTOR);
-  if (!target) return;
-
-  target.classList.remove("click-pop");
-  void target.offsetWidth;
-  target.classList.add("click-pop");
-  window.setTimeout(() => target.classList.remove("click-pop"), 560);
-
-  const rect = target.getBoundingClientRect();
-  const ripple = document.createElement("span");
-  const size = Math.max(rect.width, rect.height) * 1.35;
-  ripple.className = "click-ripple";
-  ripple.style.width = `${size}px`;
-  ripple.style.height = `${size}px`;
-  const x = typeof event.clientX === "number" ? event.clientX : rect.left + rect.width / 2;
-  const y = typeof event.clientY === "number" ? event.clientY : rect.top + rect.height / 2;
-  ripple.style.left = `${x - rect.left - size / 2}px`;
-  ripple.style.top = `${y - rect.top - size / 2}px`;
-  target.appendChild(ripple);
-  window.setTimeout(() => ripple.remove(), 720);
-}
-
-document.addEventListener("pointerdown", animateClick, { passive: true });
-
-const navDropdowns = [...document.querySelectorAll(".nav-dropdown")];
-
-function setNavDropdownState(dropdown, isOpen) {
-  if (!dropdown) return;
-  const trigger = dropdown.querySelector(".nav-dropdown-trigger");
-  const panel = [...dropdown.children].find((child) =>
-    child.classList.contains("nav-dropdown-menu") || child.classList.contains("focus-player"),
-  );
-  dropdown.classList.toggle("is-open", isOpen);
-  trigger?.setAttribute("aria-expanded", String(isOpen));
-  if (panel) panel.hidden = !isOpen;
-}
-
-navDropdowns.forEach((dropdown) => {
-  const trigger = dropdown.querySelector(".nav-dropdown-trigger");
-  trigger?.addEventListener("click", () => {
-    const shouldOpen = !dropdown.classList.contains("is-open");
-    navDropdowns.forEach((otherDropdown) => {
-      setNavDropdownState(otherDropdown, otherDropdown === dropdown && shouldOpen);
-    });
-  });
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key !== "Escape") return;
-  navDropdowns.forEach((dropdown) => setNavDropdownState(dropdown, false));
-});
-
 restoreCompletedCopies();
 new MutationObserver(() => restoreCompletedCopies()).observe(document.body, { childList: true, subtree: true });
 
 document.addEventListener("click", (event) => {
   if (!event.target.closest(".nav-dropdown")) {
-    navDropdowns.forEach((dropdown) => setNavDropdownState(dropdown, false));
+    document.body.classList.remove("nav-menu-open");
   }
 
   const nav = event.target.closest("[data-view]");
   if (nav) {
     setView(nav.dataset.view, nav.dataset.toolFocus || "");
-    setNavDropdownState(nav.closest(".nav-dropdown"), false);
     return;
   }
 
