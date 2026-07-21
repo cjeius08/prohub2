@@ -4,19 +4,27 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cjei Work Hub</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=grand-line-2" />
   </head>
   <body>
     <header class="site-header">
       <div class="header-inner">
-        <img src="assets/cjei-work-hub-logo.png" alt="Cjei Work Hub Logo" class="site-logo" />
+        <img src="cjei-work-hub-logo.png" alt="Cjei Work Hub Logo" class="site-logo" />
+        <div class="grand-line-flag" aria-label="One Piece fan edition">
+          <img src="straw-hat-pirate-emblem.png" alt="" aria-hidden="true" />
+          <span><strong>ONE PIECE</strong> Fan Edition</span>
+        </div>
       </div>
     </header>
 
     <section class="brand-hero" aria-label="Cjei Work Hub overview">
-      <div class="hero-icon" aria-hidden="true">AI</div>
+      <div class="hero-icon">
+        <img src="straw-hat-pirate-emblem.png" alt="Straw-hat pirate crew emblem" />
+        <span class="hero-ai-label">AI</span>
+      </div>
       <div>
         <span>Cjei Work Hub</span>
+        <em class="fan-edition-badge">One Piece Fan Edition · Grand Line Support Deck</em>
         <strong>Search customer scripts, manuals, ticket notes, Medify references, and tools in one clean workspace.</strong>
       </div>
       <div class="hero-stat" aria-label="Workspace benefit">
@@ -34,12 +42,12 @@
             <span>Dashboard</span>
           </button>
 
-          <details class="nav-dropdown">
-            <summary>
+          <div class="nav-dropdown">
+            <button class="nav-dropdown-trigger" type="button" aria-expanded="false" aria-controls="dailyWorkflowMenu" aria-haspopup="true">
               <span>Daily workflow</span>
               <small>Email · Chat · Voice</small>
-            </summary>
-            <div class="nav-dropdown-menu">
+            </button>
+            <div class="nav-dropdown-menu" id="dailyWorkflowMenu" hidden>
               <button class="nav-item" data-view="canned" title="Ready-to-send email responses">
                 <span class="icon">E</span>
                 <span>Email Responses</span>
@@ -61,14 +69,14 @@
                 <span>Voice Calls</span>
               </button>
             </div>
-          </details>
+          </div>
 
-          <details class="nav-dropdown">
-            <summary>
+          <div class="nav-dropdown">
+            <button class="nav-dropdown-trigger" type="button" aria-expanded="false" aria-controls="caseTabsMenu" aria-haspopup="true">
               <span>Case tabs</span>
               <small>Orders · Products · Support</small>
-            </summary>
-            <div class="nav-dropdown-menu">
+            </button>
+            <div class="nav-dropdown-menu" id="caseTabsMenu" hidden>
               <button class="nav-item" data-view="filterClub" title="Filter Club, subscriptions, cancellations, and charge-date changes">
                 <span class="icon">FC</span>
                 <span>Filter Club</span>
@@ -90,14 +98,14 @@
                 <span>Troubleshooting</span>
               </button>
             </div>
-          </details>
+          </div>
 
-          <details class="nav-dropdown nav-dropdown-wide">
-            <summary>
+          <div class="nav-dropdown nav-dropdown-wide">
+            <button class="nav-dropdown-trigger" type="button" aria-expanded="false" aria-controls="referencesToolsMenu" aria-haspopup="true">
               <span>References & tools</span>
               <small>KB · Manuals · Utilities</small>
-            </summary>
-            <div class="nav-dropdown-menu nav-dropdown-grid">
+            </button>
+            <div class="nav-dropdown-menu nav-dropdown-grid" id="referencesToolsMenu" hidden>
               <button class="nav-item" data-view="prompts" title="Copy-ready ChatGPT prompts">
                 <span class="icon">GPT</span>
                 <span>ChatGPT Prompts</span>
@@ -131,14 +139,14 @@
                 <span>Sheet Tools</span>
               </button>
             </div>
-          </details>
+          </div>
 
-          <details class="nav-dropdown nav-music-dropdown">
-            <summary>
+          <div class="nav-dropdown nav-music-dropdown">
+            <button class="nav-dropdown-trigger" type="button" aria-expanded="false" aria-controls="focusMusicMenu" aria-haspopup="true">
               <span>Focus music</span>
               <small id="musicNavStatus">Player</small>
-            </summary>
-            <section class="focus-player" aria-label="Focus music player">
+            </button>
+            <section class="focus-player" id="focusMusicMenu" aria-label="Focus music player" hidden>
               <div>
                 <p class="section-kicker">Focus music</p>
                 <strong id="musicTitle">No track loaded</strong>
@@ -155,7 +163,7 @@
                 <input id="musicVolume" type="range" min="0" max="1" step="0.01" value="0.15" />
               </label>
             </section>
-          </details>
+          </div>
         </div>
       </aside>
 
@@ -1625,13 +1633,13 @@ Customer message / my notes:
 
 
     <button id="cjeiBotLauncher" class="cjei-bot-launcher" type="button" aria-label="Open Cjei search helper">
-      <img src="assets/cjei-search-bot.png" alt="Cjei search helper" />
+      <img src="cjei-search-bot.png" alt="Cjei search helper" />
       <span>Search Helper</span>
     </button>
     <section id="cjeiBotPanel" class="cjei-bot-panel" aria-label="Cjei Work Hub search helper" hidden>
       <button id="cjeiBotClose" class="cjei-bot-close" type="button" aria-label="Close search helper">×</button>
       <div class="cjei-bot-panel-head">
-        <img src="assets/cjei-search-bot.png" alt="" aria-hidden="true" />
+        <img src="cjei-search-bot.png" alt="" aria-hidden="true" />
         <div>
           <strong>Hi, I’m Cjei Bot</strong>
           <span>Click me anytime to search everything inside the hub.</span>
@@ -1661,7 +1669,7 @@ Customer message / my notes:
     <script src="internal_kb.js"></script>
     <script src="support_library.js"></script>
     <script src="faq_data.js"></script>
-    <script src="focus_music.js"></script>
-    <script src="app.js"></script>
+    <script src="focus_music.js?v=grand-line-2"></script>
+    <script src="app.js?v=grand-line-2"></script>
   </body>
 </html>

@@ -1972,13 +1972,31 @@ function animateClick(event) {
 document.addEventListener("pointerdown", animateClick, { passive: true });
 
 const navDropdowns = [...document.querySelectorAll(".nav-dropdown")];
+
+function setNavDropdownState(dropdown, isOpen) {
+  if (!dropdown) return;
+  const trigger = dropdown.querySelector(".nav-dropdown-trigger");
+  const panel = [...dropdown.children].find((child) =>
+    child.classList.contains("nav-dropdown-menu") || child.classList.contains("focus-player"),
+  );
+  dropdown.classList.toggle("is-open", isOpen);
+  trigger?.setAttribute("aria-expanded", String(isOpen));
+  if (panel) panel.hidden = !isOpen;
+}
+
 navDropdowns.forEach((dropdown) => {
-  dropdown.addEventListener("toggle", () => {
-    if (!dropdown.open) return;
+  const trigger = dropdown.querySelector(".nav-dropdown-trigger");
+  trigger?.addEventListener("click", () => {
+    const shouldOpen = !dropdown.classList.contains("is-open");
     navDropdowns.forEach((otherDropdown) => {
-      if (otherDropdown !== dropdown) otherDropdown.removeAttribute("open");
+      setNavDropdownState(otherDropdown, otherDropdown === dropdown && shouldOpen);
     });
   });
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape") return;
+  navDropdowns.forEach((dropdown) => setNavDropdownState(dropdown, false));
 });
 
 restoreCompletedCopies();
@@ -1986,13 +2004,13 @@ new MutationObserver(() => restoreCompletedCopies()).observe(document.body, { ch
 
 document.addEventListener("click", (event) => {
   if (!event.target.closest(".nav-dropdown")) {
-    navDropdowns.forEach((dropdown) => dropdown.removeAttribute("open"));
+    navDropdowns.forEach((dropdown) => setNavDropdownState(dropdown, false));
   }
 
   const nav = event.target.closest("[data-view]");
   if (nav) {
     setView(nav.dataset.view, nav.dataset.toolFocus || "");
-    nav.closest(".nav-dropdown")?.removeAttribute("open");
+    setNavDropdownState(nav.closest(".nav-dropdown"), false);
     return;
   }
 

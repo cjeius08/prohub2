@@ -4,7 +4,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Soft Piano Focus",
       artist: "Original generated loop",
-      src: "assets/music/soft-piano-focus.wav",
+      src: "soft-piano-focus.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -12,7 +12,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Calm Lounge Pad",
       artist: "Original generated loop",
-      src: "assets/music/calm-lounge-pad.wav",
+      src: "calm-lounge-pad.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -20,7 +20,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Canon Focus Progression",
       artist: "Original generated loop",
-      src: "assets/music/canon-focus-progression.wav",
+      src: "canon-focus-progression.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -28,7 +28,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Upbeat Piano Groove",
       artist: "Original generated loop",
-      src: "assets/music/upbeat-piano-groove.wav",
+      src: "upbeat-piano-groove.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -36,7 +36,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Bright Lounge Bounce",
       artist: "Original generated loop",
-      src: "assets/music/bright-lounge-bounce.wav",
+      src: "bright-lounge-bounce.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -44,7 +44,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Sunny Focus Keys",
       artist: "Original generated loop",
-      src: "assets/music/sunny-focus-keys.wav",
+      src: "sunny-focus-keys.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -52,7 +52,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Light Jazz Walk",
       artist: "Original generated loop",
-      src: "assets/music/light-jazz-walk.wav",
+      src: "light-jazz-walk.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -60,7 +60,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Warm Soulful Lounge",
       artist: "Original generated loop",
-      src: "assets/music/warm-soulful-lounge.wav",
+      src: "warm-soulful-lounge.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -68,7 +68,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Soft Pop Evening Keys",
       artist: "Original generated loop",
-      src: "assets/music/soft-pop-evening-keys.wav",
+      src: "soft-pop-evening-keys.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
@@ -76,7 +76,7 @@ window.FOCUS_MUSIC = {
     {
       title: "Cozy Blue Sky Groove",
       artist: "Original generated loop",
-      src: "assets/music/cozy-blue-sky-groove.wav",
+      src: "cozy-blue-sky-groove.wav",
       license: "Original local audio generated for Cjei Work Hub",
       sourceUrl: "",
       attributionRequired: false
