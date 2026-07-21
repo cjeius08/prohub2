@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cjei Work Hub</title>
     <link rel="stylesheet" href="styles.css?v=grand-line-4" />
+    <link rel="stylesheet" href="guided_processes.css?v=guided-process-1" />
   </head>
   <body>
     <header class="site-header">
@@ -91,6 +92,10 @@
               <small>Orders · Products · Support</small>
             </button>
             <div class="nav-dropdown-menu" id="caseTabsMenu" hidden>
+              <button class="nav-item" data-view="processes" title="Step-by-step warranty, shipping claim, and return workflows">
+                <span class="icon">GP</span>
+                <span>Guided Processes</span>
+              </button>
               <button class="nav-item" data-view="filterClub" title="Filter Club, subscriptions, cancellations, and charge-date changes">
                 <span class="icon">FC</span>
                 <span>Filter Club</span>
@@ -330,6 +335,11 @@ JA</pre>
             <strong>Grouped by issue type so nothing feels scattered.</strong>
           </div>
           <div class="dashboard-grid compact-dashboard" aria-label="Case workspace cards">
+            <button class="dashboard-card" type="button" data-view="processes">
+              <span class="card-icon">GP</span>
+              <strong>Guided Processes</strong>
+              <span>Step-by-step Warranty, UPS claim, and Returns workflows with branching decisions and safe case summaries.</span>
+            </button>
             <button class="dashboard-card" type="button" data-view="filterClub">
               <span class="card-icon">FC</span>
               <strong>Filter Club</strong>
@@ -1034,8 +1044,12 @@ Email: info@medifyair.com</pre>
             </article>
           </div>
         </section>
-
-
+        <section id="processesView" class="view guided-process-view">
+          <div id="guidedProcessApp" role="region" aria-label="Guided Process Navigator"></div>
+          <noscript>
+            <div class="empty">JavaScript is required to use the Guided Process Navigator. All existing reference pages remain available from the navigation.</div>
+          </noscript>
+        </section>
 
         <section id="ordersView" class="view workflow-page">
           <div class="section-heading page-hero-heading">
@@ -1046,6 +1060,13 @@ Email: info@medifyair.com</pre>
             </div>
             <span>Order flow</span>
           </div>
+          <aside class="guided-existing-cta" aria-label="Guided order process shortcut">
+            <div>
+              <strong>Need the full step-by-step process?</strong>
+              <span>Open the Guided Process Navigator for branching UPS claims, returns, refunds, and confirmation-safe summaries.</span>
+            </div>
+            <button type="button" data-view="processes">Open Guided Processes <span aria-hidden="true">→</span></button>
+          </aside>
           <section class="flow-card">
             <h3>Clean order flow</h3>
             <ol class="flow-steps compact-steps">
@@ -1685,6 +1706,7 @@ Customer message / my notes:
     <script src="faq_data.js"></script>
     <script src="focus_music.js?v=grand-line-3"></script>
     <script src="grand-line-ui.js?v=grand-line-3"></script>
+    <script src="guided_processes.js?v=guided-process-1"></script>
     <script src="app.js?v=grand-line-3"></script>
   </body>
 </html>
