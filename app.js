@@ -1830,6 +1830,7 @@ function renderCurrentView() {
   if (state.view === "faqs") renderFaqs();
   if (state.view === "tools") renderTools();
   if (state.view === "favorites") renderFavorites();
+  if (state.view === "processes") window.GuidedProcessNavigator?.render();
 }
 
 function updateWorkspaceMode() {
@@ -1885,7 +1886,8 @@ function setView(view, toolFocus = "") {
       purifierCompare: "#purifierComparisonPanel",
     };
     const target = state.toolFocus ? document.querySelector(focusTargets[state.toolFocus]) : activePanel;
-    (target || activePanel || document.querySelector(".workspace"))?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const reduceMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+    (target || activePanel || document.querySelector(".workspace"))?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" });
   }, 80);
 
   if (history.replaceState) {
@@ -1905,7 +1907,7 @@ function setInitialViewFromHash() {
     return true;
   }
   const view = hash.split("-")[0];
-  if (["hub", "canned", "tickets", "ticketLinks", "voice", "l1chats", "orders", "filterClub", "troubleshooting", "productInfo", "purifierScript", "prompts", "manuals", "tools", "favorites", "internalKb", "faqs"].includes(view)) {
+  if (["hub", "canned", "tickets", "ticketLinks", "voice", "l1chats", "orders", "processes", "filterClub", "troubleshooting", "productInfo", "purifierScript", "prompts", "manuals", "tools", "favorites", "internalKb", "faqs"].includes(view)) {
     setView(view);
     return true;
   }
