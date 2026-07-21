@@ -5662,14 +5662,14 @@ body::after {
   border-bottom: 5px solid var(--grand-gold) !important;
   background:
     linear-gradient(105deg, rgba(4, 19, 39, 0.98), rgba(7, 48, 83, 0.95)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: 0 12px 30px rgba(2, 15, 31, 0.32);
 }
 
 .site-header::before {
   position: absolute;
   inset: 0;
-  background: url("grand-line-map-bg.webp") center 38% / 920px auto repeat;
+  background: url("grand-line-map-bg.png") center 38% / 920px auto repeat;
   content: "";
   opacity: 0.08;
   pointer-events: none;
@@ -5822,7 +5822,7 @@ body::after {
   border-radius: 26px 26px 26px 8px !important;
   background:
     linear-gradient(100deg, rgba(255, 247, 223, 0.98) 0%, rgba(244, 223, 173, 0.95) 48%, rgba(179, 218, 225, 0.86) 100%),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: var(--grand-shadow), inset 0 0 0 6px rgba(255, 247, 223, 0.56) !important;
 }
 
@@ -5960,7 +5960,7 @@ body::after {
   border-radius: 18px 18px 18px 5px !important;
   background:
     linear-gradient(100deg, rgba(4, 19, 39, 0.99), rgba(9, 52, 87, 0.98)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: 0 15px 36px rgba(2, 15, 31, 0.3), inset 0 0 0 2px rgba(242, 189, 69, 0.2) !important;
 }
 
@@ -5968,7 +5968,7 @@ body::after {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: url("grand-line-map-bg.webp") center / 640px auto;
+  background: url("grand-line-map-bg.png") center / 640px auto;
   content: "";
   opacity: 0.055;
   pointer-events: none;
@@ -6034,7 +6034,7 @@ body::after {
   border-radius: 17px 17px 17px 5px !important;
   background:
     linear-gradient(rgba(6, 26, 52, 0.96), rgba(10, 49, 85, 0.97)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: 10px 14px 0 rgba(2, 15, 31, 0.18), 0 28px 56px rgba(2, 15, 31, 0.5) !important;
 }
 
@@ -6100,7 +6100,7 @@ body::after {
   border-radius: 21px 21px 21px 6px !important;
   background:
     linear-gradient(rgba(255, 247, 223, 0.91), rgba(244, 223, 173, 0.9)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: var(--grand-shadow) !important;
 }
 
@@ -6178,7 +6178,7 @@ body::after {
   border-radius: 22px 22px 22px 6px !important;
   background:
     linear-gradient(110deg, rgba(4, 19, 39, 0.96), rgba(8, 65, 106, 0.91)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: var(--grand-shadow) !important;
 }
 
@@ -6221,7 +6221,7 @@ body::after {
   border-radius: 16px 16px 16px 5px !important;
   background:
     linear-gradient(rgba(255, 248, 226, 0.94), rgba(244, 223, 173, 0.92)),
-    url("grand-line-map-bg.webp") center / 720px auto !important;
+    url("grand-line-map-bg.png") center / 720px auto !important;
   color: var(--grand-ink) !important;
   box-shadow: 5px 6px 0 rgba(95, 59, 27, 0.1), 0 12px 26px rgba(3, 21, 47, 0.11) !important;
 }
@@ -6233,7 +6233,7 @@ body::after {
   background:
     linear-gradient(105deg, rgba(255, 248, 226, 0.96), rgba(244, 223, 173, 0.9)),
     url("straw-hat-pirate-emblem.png") right -24px bottom -30px / 132px no-repeat,
-    url("grand-line-map-bg.webp") center / 720px auto !important;
+    url("grand-line-map-bg.png") center / 720px auto !important;
 }
 
 .dashboard-card::before {
@@ -6272,7 +6272,7 @@ body::after {
   border-radius: 14px 14px 14px 4px !important;
   background:
     linear-gradient(rgba(255, 248, 226, 0.95), rgba(244, 223, 173, 0.92)),
-    url("grand-line-map-bg.webp") center / 560px auto !important;
+    url("grand-line-map-bg.png") center / 560px auto !important;
 }
 
 .note-template-bar,
@@ -6288,7 +6288,7 @@ body::after {
   border-radius: 19px 19px 19px 5px !important;
   background:
     linear-gradient(rgba(255, 248, 226, 0.94), rgba(244, 223, 173, 0.91)),
-    url("grand-line-map-bg.webp") center / 760px auto !important;
+    url("grand-line-map-bg.png") center / 760px auto !important;
   box-shadow: var(--grand-shadow) !important;
 }
 
@@ -6299,7 +6299,7 @@ body::after {
   border-radius: 14px 14px 14px 4px !important;
   background:
     linear-gradient(145deg, rgba(4, 19, 39, 0.98), rgba(10, 49, 85, 0.97)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: 5px 6px 0 rgba(116, 25, 29, 0.4) !important;
 }
 
@@ -6351,7 +6351,7 @@ a.primary-action {
   border-radius: 20px 20px 20px 6px !important;
   background:
     linear-gradient(rgba(255, 248, 226, 0.97), rgba(244, 223, 173, 0.96)),
-    url("grand-line-map-bg.webp") center / cover !important;
+    url("grand-line-map-bg.png") center / cover !important;
   box-shadow: 0 26px 64px rgba(2, 15, 31, 0.42) !important;
 }
 
