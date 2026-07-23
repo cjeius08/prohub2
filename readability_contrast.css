@@ -1,0 +1,198 @@
+/* Accessibility contrast overrides
+   Loaded last so theme layers cannot make workflow or dashboard text unreadable.
+   This file changes presentation only; no content or workflow behavior is altered. */
+
+/* Support Process Guides: light cards always use dark readable text. */
+#supportProcessGuides,
+#supportProcessGuides .card,
+#supportProcessGuides .support-process-panel {
+  color: #172033 !important;
+}
+
+#supportProcessGuides .card :is(h1, h2, h3, h4, h5, h6),
+#supportProcessGuides :is(.wgp-card-heading, .ldc-card-heading, .ret-card-heading) :is(h1, h2, h3, h4, h5, h6) {
+  color: #061a34 !important;
+  text-shadow: none !important;
+}
+
+#supportProcessGuides :is(
+  #wgp-overall-status,
+  #ldc-overall-status,
+  #ret-overall-status,
+  #wgp-next-action,
+  #ldc-next-action,
+  #ret-next-action
+) {
+  color: #334155 !important;
+}
+
+/* Outcome/current badges stay legible in every final state. */
+#supportProcessGuides :is(
+  #wgp-current-status,
+  #ldc-current-status,
+  #ret-current-status,
+  .viz-badge
+) {
+  border-color: #6f8799 !important;
+  background: #eaf2f6 !important;
+  color: #123e5a !important;
+  text-shadow: none !important;
+}
+
+/* Summary tables include Outcome, Next action, order, tracking, and claim values. */
+#supportProcessGuides .table {
+  border-color: #9eabb7 !important;
+  background: #fffdf8 !important;
+  color: #172033 !important;
+}
+
+#supportProcessGuides .table :is(th, td) {
+  border-color: #aab5c0 !important;
+  color: #172033 !important;
+}
+
+#supportProcessGuides .table th {
+  background: #e8eef2 !important;
+  color: #061a34 !important;
+  font-weight: 850 !important;
+}
+
+#supportProcessGuides .table td {
+  background: #fffdf8 !important;
+  font-weight: 600;
+}
+
+/* Customer-ready responses and every form state. */
+#supportProcessGuides :is(input, select, textarea) {
+  border-color: #778696 !important;
+  background: #ffffff !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+  opacity: 1 !important;
+}
+
+#supportProcessGuides textarea[readonly] {
+  border-color: #708191 !important;
+  background: #f3f6f8 !important;
+  color: #172033 !important;
+  -webkit-text-fill-color: #172033 !important;
+}
+
+#supportProcessGuides :is(input, textarea)::placeholder {
+  color: #566473 !important;
+  opacity: 1 !important;
+}
+
+#supportProcessGuides :is(input, select, textarea, button):disabled {
+  border-color: #aeb7c0 !important;
+  background: #e5e9ed !important;
+  color: #505b67 !important;
+  -webkit-text-fill-color: #505b67 !important;
+  opacity: 1 !important;
+}
+
+#supportProcessGuides :is(label, legend, .form-label, .form-check-label) {
+  color: #172033 !important;
+}
+
+#supportProcessGuides .text-muted {
+  color: #465467 !important;
+}
+
+#supportProcessGuides .text-destructive,
+#supportProcessGuides [role="alert"] {
+  color: #7b1f25 !important;
+}
+
+/* Buttons preserve clear text in default, active, hover, and disabled states. */
+#supportProcessGuides .btn {
+  background: #ffffff !important;
+  color: #123e5a !important;
+}
+
+#supportProcessGuides .btn:hover {
+  background: #e8f2f7 !important;
+  color: #061a34 !important;
+}
+
+#supportProcessGuides .btn-primary {
+  background: #0a3155 !important;
+  color: #ffffff !important;
+}
+
+#supportProcessGuides .btn-primary:hover {
+  background: #061a34 !important;
+  color: #ffffff !important;
+}
+
+#supportProcessGuides .btn:disabled {
+  background: #e5e9ed !important;
+  color: #505b67 !important;
+}
+
+/* Selected process uses light text; unselected processes use dark text. */
+#supportProcessGuides .support-process-choice {
+  background: #fffdf8 !important;
+  color: #172033 !important;
+}
+
+#supportProcessGuides .support-process-choice small {
+  color: #465467 !important;
+}
+
+#supportProcessGuides .support-process-choice.is-active {
+  background: #8b2026 !important;
+  color: #ffffff !important;
+}
+
+#supportProcessGuides .support-process-choice.is-active small {
+  color: #fff4dc !important;
+}
+
+/* Visible keyboard focus across the website. */
+:is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid #f2bd45 !important;
+  outline-offset: 3px !important;
+}
+
+/* Dashboard semantic surfaces: explicit readable pairs. */
+#hubView .section-heading h2 {
+  color: #ffffff !important;
+}
+
+#hubView .section-heading :is(p, span):not(.section-kicker) {
+  color: #e1edf3 !important;
+}
+
+#hubView :is(.result-header, .dashboard-section-title, .dashboard-card) :is(h2, h3, strong) {
+  color: #061a34 !important;
+  text-shadow: none !important;
+}
+
+#hubView :is(.result-header, .dashboard-section-title, .dashboard-card) span:not(.card-icon),
+#hubView .dashboard-card p {
+  color: #3f4b55 !important;
+}
+
+/* Common light content surfaces elsewhere in the hub. */
+.workspace :is(.card, .flow-card, .tool-panel, .warranty-panel, .manual-card, .ticket-card) {
+  color: #172033;
+}
+
+.workspace :is(.card, .flow-card, .tool-panel, .warranty-panel, .manual-card, .ticket-card)
+  :is(h2, h3, h4, strong) {
+  text-shadow: none;
+}
+
+.workspace :is(input, select, textarea)::placeholder {
+  opacity: 1;
+}
+
+@media (prefers-contrast: more) {
+  #supportProcessGuides .card,
+  #supportProcessGuides .table :is(th, td),
+  #supportProcessGuides :is(input, select, textarea) {
+    border-width: 2px !important;
+  }
+}
+
