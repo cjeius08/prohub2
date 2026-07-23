@@ -1,0 +1,721 @@
+<div id="returns-process-prototype">
+  <style>
+    #returns-process-prototype {
+      width: 100%;
+      color: var(--foreground);
+    }
+
+    #returns-process-prototype .ret-topline,
+    #returns-process-prototype .ret-card-heading,
+    #returns-process-prototype .ret-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    #returns-process-prototype .ret-progress-track {
+      width: 100%;
+      height: 0.3rem;
+      margin: 0.75rem 0 1rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+
+    #returns-process-prototype .ret-progress-value {
+      height: 100%;
+      background: var(--primary);
+      transition: width 180ms ease;
+    }
+
+    #returns-process-prototype .ret-layout {
+      display: grid;
+      grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 2fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    #returns-process-prototype .ret-nav ol {
+      display: grid;
+      gap: 0.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #returns-process-prototype .ret-nav li {
+      display: grid;
+      grid-template-columns: minmax(4.5rem, auto) minmax(0, 1fr);
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #returns-process-prototype .ret-card-heading {
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    #returns-process-prototype .ret-card-heading h2,
+    #returns-process-prototype .ret-card-heading p {
+      margin-top: 0;
+    }
+
+    #returns-process-prototype .ret-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    #returns-process-prototype .ret-field-full {
+      grid-column: 1 / -1;
+    }
+
+    #returns-process-prototype .ret-choice-list {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1rem 0;
+    }
+
+    #returns-process-prototype .ret-actions {
+      margin-top: 1rem;
+    }
+
+    #returns-process-prototype .ret-error:empty,
+    #returns-process-prototype .ret-copy-status:empty {
+      display: none;
+    }
+
+    #returns-process-prototype .ret-summary-table th {
+      width: 42%;
+    }
+
+    @media (max-width: 620px) {
+      #returns-process-prototype .ret-layout,
+      #returns-process-prototype .ret-fields {
+        grid-template-columns: 1fr;
+      }
+
+      #returns-process-prototype .ret-field-full {
+        grid-column: auto;
+      }
+
+      #returns-process-prototype .ret-nav ol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #returns-process-prototype .ret-nav li {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #returns-process-prototype .ret-progress-value {
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="ret-topline">
+    <span class="viz-badge" id="ret-step-count">Step 1 of 8</span>
+    <span id="ret-overall-status">In progress</span>
+  </div>
+  <div class="ret-progress-track" role="progressbar" aria-label="Return process progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+    <div class="ret-progress-value" style="width: 12.5%"></div>
+  </div>
+
+  <div class="ret-layout">
+    <nav class="ret-nav" aria-label="Return process steps">
+      <ol id="ret-step-list"></ol>
+    </nav>
+
+    <section class="card" aria-live="polite">
+      <div class="ret-card-heading">
+        <div>
+          <span class="viz-badge" id="ret-current-status">Current</span>
+          <h2 id="ret-current-title">Return window</h2>
+          <p class="text-muted" id="ret-next-action">Next required action: confirm how many days have passed since delivery.</p>
+        </div>
+      </div>
+
+      <div id="ret-step-content"></div>
+      <p class="text-destructive ret-error" id="ret-error" role="alert"></p>
+      <div class="ret-actions" id="ret-actions"></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById("returns-process-prototype");
+      const stepList = root.querySelector("#ret-step-list");
+      const content = root.querySelector("#ret-step-content");
+      const actions = root.querySelector("#ret-actions");
+      const error = root.querySelector("#ret-error");
+      const stepCount = root.querySelector("#ret-step-count");
+      const overallStatus = root.querySelector("#ret-overall-status");
+      const currentStatus = root.querySelector("#ret-current-status");
+      const currentTitle = root.querySelector("#ret-current-title");
+      const nextAction = root.querySelector("#ret-next-action");
+      const progress = root.querySelector(".ret-progress-track");
+      const progressValue = root.querySelector(".ret-progress-value");
+
+      const steps = [
+        { label: "Return window", action: "confirm how many days have passed since delivery." },
+        { label: "Reason or approval", action: "record the reason or verify approval for a late return." },
+        { label: "Return items", action: "identify the products and check packaging and filter seals." },
+        { label: "Photo evidence", action: "request and review item photos and the shipping label." },
+        { label: "Condition review", action: "confirm whether the items meet the return conditions." },
+        { label: "Return label", action: "provide the label only after the return is eligible." },
+        { label: "Notify customer", action: "send the verified return-label instructions." },
+        { label: "Complete", action: "review the outcome and customer email." }
+      ];
+
+      const state = {
+        step: 0,
+        maxStep: 0,
+        skipped: [],
+        reviewStep: 0,
+        customerName: "",
+        orderNumber: "",
+        daysSinceReceipt: "",
+        withinWindow: null,
+        returnReason: "",
+        approvalStatus: "",
+        approvalReference: "",
+        itemType: "",
+        itemDescription: "",
+        originalPackaging: false,
+        filterSealed: "",
+        photoRequestSent: false,
+        itemPhotosReceived: false,
+        shippingLabelPhotoReceived: false,
+        sealedFilterPhotoReceived: false,
+        conditionDecision: "",
+        conditionNotes: "",
+        labelGenerated: false,
+        returnTracking: "",
+        returnResolution: "",
+        customerNotified: false,
+        finalMode: "",
+        finalOutcome: "",
+        finalNextAction: ""
+      };
+
+      const escapeHtml = (value) => String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      const checked = (condition) => condition ? " checked" : "";
+      const selected = (value, expected) => value === expected ? " selected" : "";
+      const includesFilters = () => state.itemType === "filters" || state.itemType === "both";
+
+      function statusFor(index) {
+        if (index === state.step) return "Current";
+        if (state.skipped.includes(index)) return "Not needed";
+        if (index < state.step || index < state.maxStep) return "Complete";
+        return "Upcoming";
+      }
+
+      function renderNavigation() {
+        stepList.innerHTML = steps.map((step, index) => {
+          const status = statusFor(index);
+          const isCurrent = index === state.step;
+          const canVisit = isCurrent || (index <= state.maxStep && !state.skipped.includes(index));
+          const buttonClass = isCurrent ? "btn btn-primary" : "btn btn-ghost";
+          return `
+            <li>
+              <span class="viz-badge">${status}</span>
+              <button type="button" class="${buttonClass}" data-step="${index}"${canVisit ? "" : " disabled"}${isCurrent ? ' aria-current="step"' : ""}>
+                ${index + 1}. ${step.label}
+              </button>
+            </li>`;
+        }).join("");
+      }
+
+      function returnWindowView() {
+        const days = Number(state.daysSinceReceipt);
+        const hasDays = state.daysSinceReceipt !== "" && Number.isFinite(days);
+        return `
+          <p>Count from the date the customer received the order. The standard return window is 30 days.</p>
+          <div class="ret-fields">
+            <label class="form-label" for="ret-customer-name">Customer name
+              <input class="form-control" id="ret-customer-name" data-key="customerName" value="${escapeHtml(state.customerName)}" placeholder="Optional for the prototype">
+            </label>
+            <label class="form-label" for="ret-order-number">Order number
+              <input class="form-control" id="ret-order-number" data-key="orderNumber" value="${escapeHtml(state.orderNumber)}">
+            </label>
+            <label class="form-label ret-field-full" for="ret-days">Days since the order was received
+              <input class="form-control" id="ret-days" type="number" min="0" data-key="daysSinceReceipt" value="${escapeHtml(state.daysSinceReceipt)}">
+            </label>
+          </div>
+          ${hasDays && days <= 30 ? '<p><strong>Within the return window:</strong> Ask for the reason before requesting photos.</p>' : ""}
+          ${hasDays && days > 30 ? '<p><strong>Outside the return window:</strong> Approval is required before continuing.</p>' : ""}`;
+      }
+
+      function reasonOrApprovalView() {
+        if (state.withinWindow) {
+          return `
+            <span class="viz-badge">Within 30 days</span>
+            <p>Ask why the customer wants to return the order before requesting photos.</p>
+            <label class="form-label" for="ret-reason">Reason for return
+              <textarea class="form-control" id="ret-reason" rows="4" data-key="returnReason">${escapeHtml(state.returnReason)}</textarea>
+            </label>`;
+        }
+
+        return `
+          <span class="viz-badge">Past 30 days</span>
+          <p>The return cannot proceed unless an exception is approved.</p>
+          <label class="form-label" for="ret-late-reason">Reason for the late return request
+            <textarea class="form-control" id="ret-late-reason" rows="4" data-key="returnReason">${escapeHtml(state.returnReason)}</textarea>
+          </label>
+          <label class="form-label" for="ret-approval-status">Approval status
+            <select class="form-select" id="ret-approval-status" data-key="approvalStatus">
+              <option value="">Select status</option>
+              <option value="approved"${selected(state.approvalStatus, "approved")}>Approved — continue with photos</option>
+              <option value="pending"${selected(state.approvalStatus, "pending")}>Approval requested and pending</option>
+              <option value="denied"${selected(state.approvalStatus, "denied")}>Not approved</option>
+            </select>
+          </label>
+          ${state.approvalStatus === "approved" ? `
+            <div class="ret-fields">
+              <label class="form-label ret-field-full" for="ret-approval-reference">Approval reference or approver
+                <input class="form-control" id="ret-approval-reference" data-key="approvalReference" value="${escapeHtml(state.approvalReference)}">
+              </label>
+            </div>` : ""}`;
+      }
+
+      function returnItemsView() {
+        const filterCheck = includesFilters() ? `
+          <fieldset class="ret-choice-list">
+            <legend>Are all filters still sealed in their original plastic?</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ret-filter-sealed" data-key="filterSealed" value="yes"${checked(state.filterSealed === "yes")}>
+              <span class="form-check-label">Yes — every filter remains sealed</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ret-filter-sealed" data-key="filterSealed" value="no"${checked(state.filterSealed === "no")}>
+              <span class="form-check-label">No — one or more filters have been opened</span>
+            </label>
+          </fieldset>` : "";
+
+        return `
+          <p>Identify everything the customer wants to return.</p>
+          <label class="form-label" for="ret-item-type">Item type
+            <select class="form-select" id="ret-item-type" data-key="itemType">
+              <option value="">Select item type</option>
+              <option value="unit"${selected(state.itemType, "unit")}>Air purifier or unit</option>
+              <option value="filters"${selected(state.itemType, "filters")}>Filter or filters</option>
+              <option value="both"${selected(state.itemType, "both")}>Air purifier and filters</option>
+            </select>
+          </label>
+          <div class="ret-fields">
+            <label class="form-label ret-field-full" for="ret-item-description">Products, models, and quantities being returned
+              <textarea class="form-control" id="ret-item-description" rows="3" data-key="itemDescription">${escapeHtml(state.itemDescription)}</textarea>
+            </label>
+          </div>
+          <div class="ret-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="originalPackaging"${checked(state.originalPackaging)}>
+              <span class="form-check-label">The items still have their original packaging</span>
+            </label>
+          </div>
+          ${filterCheck}`;
+      }
+
+      function photoRequestEmail() {
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.orderNumber || "[order number]");
+        const filterLine = includesFilters()
+          ? "\n• A photo clearly showing that every filter is still sealed in its original plastic"
+          : "";
+        const opening = state.withinWindow
+          ? "Thank you for providing the reason for your return."
+          : "Your request to return the order outside the standard 30-day window has been approved as an exception.";
+        return `Hello ${customerName},\n\n${opening}\n\nMedify Air will happily accept returns if you change your mind within 30 days of receiving your order. Items must be returned in their original packaging and in good condition. Filters must remain sealed in their original plastic.\n\nBefore we provide a return shipping label for order ${orderNumber}, please send us:\n\n• Clear photos of the unit or filters you wish to return\n• A clear photo of the shipping label on the original package${filterLine}\n\nOnce we receive and review the photos, we’ll confirm whether the items are eligible for return and provide the next step.`;
+      }
+
+      function photoEvidenceView() {
+        const message = photoRequestEmail();
+        return `
+          <span class="viz-badge">Photo request</span>
+          <label class="form-label" for="ret-photo-email">Customer-ready email
+            <textarea class="form-control" id="ret-photo-email" rows="14" readonly>${message}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-text" data-copy-target="ret-photo-email" data-copy-status="ret-photo-email-status">Copy email</button>
+            <span class="text-muted ret-copy-status" id="ret-photo-email-status" aria-live="polite"></span>
+          </div>
+          <div class="ret-choice-list">
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoRequestSent"${checked(state.photoRequestSent)}><span class="form-check-label">Photo-request email was sent</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="itemPhotosReceived"${checked(state.itemPhotosReceived)}><span class="form-check-label">Photos of the unit or filters were received</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="shippingLabelPhotoReceived"${checked(state.shippingLabelPhotoReceived)}><span class="form-check-label">Photo of the original shipping label was received</span></label>
+            ${includesFilters() ? `<label class="form-check"><input class="form-check-input" type="checkbox" data-key="sealedFilterPhotoReceived"${checked(state.sealedFilterPhotoReceived)}><span class="form-check-label">Photo clearly confirms that every filter remains sealed in plastic</span></label>` : ""}
+          </div>`;
+      }
+
+      function conditionReviewView() {
+        return `
+          <span class="viz-badge">Photo review</span>
+          <p>Confirm that the items are in their original packaging and in good condition. Filters must remain sealed.</p>
+          <fieldset class="ret-choice-list">
+            <legend>Condition decision</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ret-condition" data-key="conditionDecision" value="eligible"${checked(state.conditionDecision === "eligible")}>
+              <span class="form-check-label">Eligible — condition requirements are met</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ret-condition" data-key="conditionDecision" value="ineligible"${checked(state.conditionDecision === "ineligible")}>
+              <span class="form-check-label">Not eligible based on the photos or packaging condition</span>
+            </label>
+          </fieldset>
+          <label class="form-label" for="ret-condition-notes">Review notes
+            <textarea class="form-control" id="ret-condition-notes" rows="3" data-key="conditionNotes">${escapeHtml(state.conditionNotes)}</textarea>
+          </label>`;
+      }
+
+      function returnLabelView() {
+        return `
+          <span class="viz-badge">Eligible return</span>
+          <p>Generate the return shipping label only after the photos and condition have been approved.</p>
+          <div class="ret-fields">
+            <label class="form-label" for="ret-return-tracking">Return tracking number
+              <input class="form-control" id="ret-return-tracking" data-key="returnTracking" value="${escapeHtml(state.returnTracking)}">
+            </label>
+            <label class="form-label" for="ret-return-resolution">Approved return resolution
+              <select class="form-select" id="ret-return-resolution" data-key="returnResolution">
+                <option value="">Select refund or replacement</option>
+                <option value="refund"${selected(state.returnResolution, "refund")}>Refund</option>
+                <option value="replacement"${selected(state.returnResolution, "replacement")}>Replacement</option>
+              </select>
+            </label>
+          </div>
+          <div class="ret-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="labelGenerated"${checked(state.labelGenerated)}>
+              <span class="form-check-label">Return shipping label was generated and verified</span>
+            </label>
+          </div>
+          <p class="text-muted">Remove or cover old shipping labels, securely attach the new label, and retain the return tracking number.</p>`;
+      }
+
+      function successfulReturnEmail() {
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.orderNumber || "[order number]");
+        const trackingNumber = escapeHtml(state.returnTracking || "[return tracking number]");
+        const resolution = state.returnResolution === "refund"
+          ? "refund"
+          : state.returnResolution === "replacement"
+            ? "replacement"
+            : "[refund or replacement]";
+        const packingInstruction = state.itemType === "unit"
+          ? "Pack the unit securely."
+          : state.itemType === "filters"
+            ? "Pack the filter or filters securely."
+            : state.itemType === "both"
+              ? "Pack the unit and filters securely."
+              : "Pack the item or items securely.";
+        const filterReminder = includesFilters()
+          ? "\n\nPlease make sure all filters remain sealed in their original plastic."
+          : "";
+        return `Hello ${customerName},\n\nPlease follow the instructions below to start the return process for order ${orderNumber}.\n\nPlease see the attached prepaid return label. For your reference, your return tracking number is ${trackingNumber}.\n\n1. ${packingInstruction}\n2. Print the prepaid return label and attach it securely to the package.\n3. Remove or cover any existing waybills or shipping labels attached to the box. This will prevent UPS from scanning the incorrect label.\n4. Drop off the package at the nearest UPS Access Point at your convenience.${filterReminder}\n\nPlease let us know once you have sent the package back. Once our warehouse receives it, we’ll process your ${resolution} immediately.`;
+      }
+
+      function notifyCustomerView() {
+        const message = successfulReturnEmail();
+        return `
+          <span class="viz-badge">Return label ready</span>
+          <label class="form-label" for="ret-success-email">Customer-ready email
+            <textarea class="form-control" id="ret-success-email" rows="12" readonly>${message}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-text" data-copy-target="ret-success-email" data-copy-status="ret-success-email-status">Copy email</button>
+            <span class="text-muted ret-copy-status" id="ret-success-email-status" aria-live="polite"></span>
+          </div>
+          <div class="ret-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="customerNotified"${checked(state.customerNotified)}>
+              <span class="form-check-label">Return label and instructions were sent to the customer</span>
+            </label>
+          </div>`;
+      }
+
+      function endingEmail() {
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.orderNumber || "[order number]");
+
+        if (state.finalMode === "late-denied") {
+          return `Hello ${customerName},\n\nThank you for contacting us about returning order ${orderNumber}. We reviewed your request, but we’re unable to proceed with the return because it falls outside our 30-day return window and an exception was not approved.\n\nMedify Air will happily accept returns if you change your mind within 30 days of receiving your order. Items must be returned in their original packaging and in good condition. Filters must also remain sealed in their original plastic.\n\nWe understand this may be disappointing, and we appreciate your understanding of our return policy.`;
+        }
+
+        if (state.finalMode === "approval-pending") {
+          return `Hello ${customerName},\n\nYour request to return order ${orderNumber} falls outside the standard 30-day return window, so we’ve submitted it for approval. No return shipping label has been issued at this time.\n\nWe’ll update you once a decision is available.`;
+        }
+
+        if (state.finalMode === "unsealed-filter") {
+          return `Hello ${customerName},\n\nThank you for the information about your return. We’re unable to proceed with the return because filters must remain sealed in their original plastic to be eligible.\n\nOur return policy allows eligible items to be returned within 30 days of receipt in their original packaging and in good condition. We appreciate your understanding.`;
+        }
+
+        if (state.finalMode === "condition-denied") {
+          return `Hello ${customerName},\n\nThank you for sending the requested photos. After reviewing them, we’re unable to provide a return shipping label because the items do not meet the return-condition requirements.\n\nMedify Air accepts eligible returns within 30 days of receipt when the goods are in their original packaging and in good condition. Filters must remain sealed in their original plastic. We appreciate your understanding.`;
+        }
+
+        if (state.finalMode === "success") return successfulReturnEmail();
+
+        return `Hello ${customerName},\n\nWe reviewed your return request and will contact you with the next verified update as soon as it becomes available.`;
+      }
+
+      function completeView() {
+        const itemLabels = {
+          unit: "Air purifier or unit",
+          filters: "Filter or filters",
+          both: "Air purifier and filters"
+        };
+        const approvalLabels = {
+          approved: "Late-return exception approved",
+          pending: "Approval pending",
+          denied: "Not approved"
+        };
+        const rows = [
+          ["Order number", state.orderNumber || "Not recorded"],
+          ["Days since receipt", state.daysSinceReceipt === "" ? "Not recorded" : state.daysSinceReceipt],
+          ["Return window", state.withinWindow ? "Within 30 days" : "Past 30 days"],
+          ["Approval", state.withinWindow ? "Not required" : approvalLabels[state.approvalStatus] || "Not recorded"],
+          ["Items", itemLabels[state.itemType] || "Not reviewed"],
+          ["Return tracking", state.returnTracking || "Not issued"],
+          ["Resolution", state.returnResolution === "refund" ? "Refund" : state.returnResolution === "replacement" ? "Replacement" : "Not selected"],
+          ["Outcome", state.finalOutcome || "Review required"],
+          ["Next action", state.finalNextAction || "None"]
+        ];
+        const message = endingEmail();
+        return `
+          <div class="table-responsive">
+            <table class="table table-sm ret-summary-table">
+              <thead><tr><th scope="col">Return field</th><th scope="col">Result</th></tr></thead>
+              <tbody>${rows.map((row) => `<tr><th scope="row">${row[0]}</th><td>${escapeHtml(row[1])}</td></tr>`).join("")}</tbody>
+            </table>
+          </div>
+          <span class="viz-badge">Email for this ending</span>
+          <label class="form-label" for="ret-ending-email">Customer-ready response
+            <textarea class="form-control" id="ret-ending-email" rows="12" readonly>${message}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-text" data-copy-target="ret-ending-email" data-copy-status="ret-ending-email-status">Copy email</button>
+            <span class="text-muted ret-copy-status" id="ret-ending-email-status" aria-live="polite"></span>
+          </div>`;
+      }
+
+      function renderContent() {
+        const views = [
+          returnWindowView,
+          reasonOrApprovalView,
+          returnItemsView,
+          photoEvidenceView,
+          conditionReviewView,
+          returnLabelView,
+          notifyCustomerView,
+          completeView
+        ];
+        content.innerHTML = views[state.step]();
+      }
+
+      function nextLabel() {
+        if (state.step === 1 && !state.withinWindow && state.approvalStatus === "pending") return "Finish as pending";
+        if (state.step === 1 && !state.withinWindow && state.approvalStatus === "denied") return "Send policy response";
+        if (state.step === 2 && includesFilters() && state.filterSealed === "no") return "Close as ineligible";
+        if (state.step === 4 && state.conditionDecision === "ineligible") return "Send condition response";
+        if (state.step === 6) return "Complete return case";
+        return "Continue";
+      }
+
+      function renderActions() {
+        if (state.step === 7) {
+          actions.innerHTML = `<button type="button" class="btn btn-ghost" data-step="${state.reviewStep}">Back to review</button>`;
+          return;
+        }
+        actions.innerHTML = `
+          <button type="button" class="btn btn-ghost" data-action="back"${state.step === 0 ? " disabled" : ""}>Back</button>
+          <button type="button" class="btn btn-primary" data-action="next">${nextLabel()}</button>`;
+      }
+
+      function render() {
+        const isComplete = state.step === 7;
+        stepCount.textContent = `Step ${state.step + 1} of ${steps.length}`;
+        overallStatus.textContent = isComplete ? "Return path complete" : "In progress";
+        currentStatus.textContent = isComplete ? "Outcome" : "Current";
+        currentTitle.textContent = steps[state.step].label;
+        nextAction.textContent = isComplete
+          ? "Review the final outcome and customer email."
+          : `Next required action: ${steps[state.step].action}`;
+        const percent = ((state.step + 1) / steps.length) * 100;
+        progress.setAttribute("aria-valuenow", String(state.step + 1));
+        progressValue.style.width = `${percent}%`;
+        error.textContent = "";
+        renderNavigation();
+        renderContent();
+        renderActions();
+      }
+
+      function fail(message) {
+        error.textContent = message;
+      }
+
+      function moveTo(next, skipped) {
+        state.skipped = Array.from(new Set([
+          ...state.skipped.filter((index) => index < state.step),
+          ...(skipped || [])
+        ]));
+        state.step = next;
+        state.maxStep = next;
+        state.finalMode = "";
+        render();
+      }
+
+      function finish(mode, outcome, nextActionText, reviewStep, skipped) {
+        state.finalMode = mode;
+        state.finalOutcome = outcome;
+        state.finalNextAction = nextActionText;
+        state.reviewStep = reviewStep;
+        state.skipped = Array.from(new Set([
+          ...state.skipped.filter((index) => index <= reviewStep),
+          ...(skipped || [])
+        ]));
+        state.step = 7;
+        state.maxStep = 7;
+        render();
+      }
+
+      function advance() {
+        if (state.step === 0) {
+          const days = Number(state.daysSinceReceipt);
+          if (!state.orderNumber.trim()) return fail("Enter the order number.");
+          if (state.daysSinceReceipt === "" || !Number.isFinite(days) || days < 0) return fail("Enter the number of days since the order was received.");
+          state.withinWindow = days <= 30;
+          state.approvalStatus = "";
+          state.returnResolution = "";
+          return moveTo(1, []);
+        }
+
+        if (state.step === 1) {
+          if (!state.returnReason.trim()) return fail("Enter the customer’s reason for the return.");
+          if (!state.withinWindow) {
+            if (!state.approvalStatus) return fail("Select the approval status for the late return.");
+            if (state.approvalStatus === "pending") {
+              return finish("approval-pending", "Late-return approval is pending", "Wait for the approval decision before requesting photos or issuing a label.", 1, [2, 3, 4, 5, 6]);
+            }
+            if (state.approvalStatus === "denied") {
+              return finish("late-denied", "Return not processed because the request is past 30 days and was not approved", "Send the return-policy response and close the request.", 1, [2, 3, 4, 5, 6]);
+            }
+            if (!state.approvalReference.trim()) return fail("Record the approval reference or approver.");
+          }
+          state.itemType = "";
+          state.filterSealed = "";
+          state.conditionDecision = "";
+          return moveTo(2, []);
+        }
+
+        if (state.step === 2) {
+          if (!state.itemType || !state.itemDescription.trim()) return fail("Select the item type and list the products and quantities being returned.");
+          if (includesFilters() && !state.filterSealed) return fail("Confirm whether every filter is still sealed in its original plastic.");
+          if (includesFilters() && state.filterSealed === "no") {
+            return finish("unsealed-filter", "Filter return is ineligible because one or more filters were opened", "Send the sealed-filter policy response and close the request.", 2, [3, 4, 5, 6]);
+          }
+          state.photoRequestSent = false;
+          state.itemPhotosReceived = false;
+          state.shippingLabelPhotoReceived = false;
+          state.sealedFilterPhotoReceived = false;
+          return moveTo(3, []);
+        }
+
+        if (state.step === 3) {
+          if (!state.photoRequestSent || !state.itemPhotosReceived || !state.shippingLabelPhotoReceived) {
+            return fail("Send the photo request and confirm receipt of the item photos and original shipping label.");
+          }
+          if (includesFilters() && !state.sealedFilterPhotoReceived) return fail("Confirm that the photos show every filter still sealed in plastic.");
+          return moveTo(4, []);
+        }
+
+        if (state.step === 4) {
+          if (!state.conditionDecision || !state.conditionNotes.trim()) return fail("Select the condition decision and record the review notes.");
+          if (state.conditionDecision === "ineligible") {
+            return finish("condition-denied", "Return not approved after the photo and condition review", "Send the condition-policy response and close the request.", 4, [5, 6]);
+          }
+          if (!state.originalPackaging) return fail("An eligible return must be confirmed as having its original packaging.");
+          if (includesFilters() && state.filterSealed !== "yes") return fail("Eligible filters must remain sealed in their original plastic.");
+          return moveTo(5, []);
+        }
+
+        if (state.step === 5) {
+          if (!state.returnTracking.trim() || !state.returnResolution || !state.labelGenerated) return fail("Enter the return tracking number, select the approved resolution, and confirm that the return label was generated.");
+          return moveTo(6, []);
+        }
+
+        if (state.step === 6) {
+          if (!state.customerNotified) return fail("Confirm that the return label and instructions were sent to the customer.");
+          return finish("success", "Eligible return approved and return shipping label provided", "Monitor the return tracking and follow the applicable process after receipt.", 6, []);
+        }
+      }
+
+      function goBack() {
+        if (state.step <= 0) return;
+        state.step -= 1;
+        render();
+      }
+
+      function updateState(target) {
+        const key = target.dataset.key;
+        if (!key) return;
+        state[key] = target.type === "checkbox" ? target.checked : target.value;
+        if (key === "itemType") {
+          state.filterSealed = "";
+          state.sealedFilterPhotoReceived = false;
+        }
+        const conditionalKeys = ["approvalStatus", "itemType", "filterSealed", "conditionDecision"];
+        if (conditionalKeys.includes(key)) render();
+      }
+
+      root.addEventListener("input", (event) => updateState(event.target));
+      root.addEventListener("change", (event) => updateState(event.target));
+
+      root.addEventListener("click", async (event) => {
+        const stepButton = event.target.closest("[data-step]");
+        if (stepButton && !stepButton.disabled) {
+          const targetStep = Number(stepButton.dataset.step);
+          if (state.step === 7 && targetStep < 7) {
+            state.step = targetStep;
+            state.maxStep = targetStep;
+            state.finalMode = "";
+            state.skipped = state.skipped.filter((index) => index <= targetStep);
+          } else {
+            state.step = targetStep;
+          }
+          render();
+          return;
+        }
+
+        const action = event.target.closest("[data-action]")?.dataset.action;
+        if (action === "next") advance();
+        if (action === "back") goBack();
+        if (action === "copy-text") {
+          const button = event.target.closest("[data-copy-target]");
+          const message = root.querySelector(`#${button.dataset.copyTarget}`);
+          const copyStatus = root.querySelector(`#${button.dataset.copyStatus}`);
+          try {
+            await navigator.clipboard.writeText(message.value);
+            copyStatus.textContent = "Email copied.";
+          } catch (copyError) {
+            message.focus();
+            message.select();
+            copyStatus.textContent = "Email selected for copying.";
+          }
+        }
+      });
+
+      render();
+    })();
+  </script>
+</div>

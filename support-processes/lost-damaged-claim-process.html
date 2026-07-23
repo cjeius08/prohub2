@@ -1,0 +1,947 @@
+<div id="lost-damaged-claim-process">
+  <style>
+    #lost-damaged-claim-process {
+      width: 100%;
+      color: var(--foreground);
+    }
+
+    #lost-damaged-claim-process .ldc-topline,
+    #lost-damaged-claim-process .ldc-card-heading,
+    #lost-damaged-claim-process .ldc-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    #lost-damaged-claim-process .ldc-progress-track {
+      width: 100%;
+      height: 0.3rem;
+      margin: 0.75rem 0 1rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+
+    #lost-damaged-claim-process .ldc-progress-value {
+      height: 100%;
+      background: var(--primary);
+      transition: width 180ms ease;
+    }
+
+    #lost-damaged-claim-process .ldc-layout {
+      display: grid;
+      grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 2fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    #lost-damaged-claim-process .ldc-nav ol {
+      display: grid;
+      gap: 0.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #lost-damaged-claim-process .ldc-nav li {
+      display: grid;
+      grid-template-columns: minmax(4.5rem, auto) minmax(0, 1fr);
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #lost-damaged-claim-process .ldc-card-heading {
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    #lost-damaged-claim-process .ldc-card-heading h2,
+    #lost-damaged-claim-process .ldc-card-heading p {
+      margin-top: 0;
+    }
+
+    #lost-damaged-claim-process .ldc-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    #lost-damaged-claim-process .ldc-field-full {
+      grid-column: 1 / -1;
+    }
+
+    #lost-damaged-claim-process .ldc-choice-list {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1rem 0;
+    }
+
+    #lost-damaged-claim-process .ldc-actions {
+      margin-top: 1rem;
+    }
+
+    #lost-damaged-claim-process .ldc-error:empty,
+    #lost-damaged-claim-process .ldc-copy-status:empty {
+      display: none;
+    }
+
+    #lost-damaged-claim-process .ldc-summary-table th {
+      width: 42%;
+    }
+
+    @media (max-width: 620px) {
+      #lost-damaged-claim-process .ldc-layout,
+      #lost-damaged-claim-process .ldc-fields {
+        grid-template-columns: 1fr;
+      }
+
+      #lost-damaged-claim-process .ldc-field-full {
+        grid-column: auto;
+      }
+
+      #lost-damaged-claim-process .ldc-nav ol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #lost-damaged-claim-process .ldc-nav li {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #lost-damaged-claim-process .ldc-progress-value {
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="ldc-topline">
+    <span class="viz-badge" id="ldc-step-count">Step 1 of 8</span>
+    <span id="ldc-overall-status">In progress</span>
+  </div>
+  <div class="ldc-progress-track" role="progressbar" aria-label="Lost or damaged claim progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+    <div class="ldc-progress-value" style="width: 12.5%"></div>
+  </div>
+
+  <div class="ldc-layout">
+    <nav class="ldc-nav" aria-label="Claim process steps">
+      <ol id="ldc-step-list"></ol>
+    </nav>
+
+    <section class="card" aria-live="polite">
+      <div class="ldc-card-heading">
+        <div>
+          <span class="viz-badge" id="ldc-current-status">Current</span>
+          <h2 id="ldc-current-title">Claim type</h2>
+          <p class="text-muted" id="ldc-next-action">Next required action: choose Lost or Damaged.</p>
+        </div>
+      </div>
+
+      <div id="ldc-step-content"></div>
+      <p class="text-destructive ldc-error" id="ldc-error" role="alert"></p>
+      <div class="ldc-actions" id="ldc-actions"></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById("lost-damaged-claim-process");
+      const stepList = root.querySelector("#ldc-step-list");
+      const content = root.querySelector("#ldc-step-content");
+      const actions = root.querySelector("#ldc-actions");
+      const error = root.querySelector("#ldc-error");
+      const stepCount = root.querySelector("#ldc-step-count");
+      const overallStatus = root.querySelector("#ldc-overall-status");
+      const currentStatus = root.querySelector("#ldc-current-status");
+      const currentTitle = root.querySelector("#ldc-current-title");
+      const nextAction = root.querySelector("#ldc-next-action");
+      const progress = root.querySelector(".ldc-progress-track");
+      const progressValue = root.querySelector(".ldc-progress-value");
+
+      const steps = [
+        { label: "Claim type", action: "choose Lost or Damaged." },
+        { label: "Scenario", action: "identify the exact delivery or damage situation." },
+        { label: "Required checks", action: "complete the checks required for this scenario." },
+        { label: "File UPS claim", action: "record the order, tracking number, and filed claim." },
+        { label: "Approval gate", action: "confirm UPS or supervisor approval when the lost-claim path requires it." },
+        { label: "Replacement", action: "create the replacement after the required approval or damage evidence is complete." },
+        { label: "Notify customer", action: "send the verified replacement update." },
+        { label: "Complete", action: "review the final outcome and pending action." }
+      ];
+
+      const state = {
+        step: 0,
+        maxStep: 0,
+        skipped: [],
+        reviewStep: 0,
+        claimType: "",
+        lostScenario: "",
+        damageScenario: "",
+        damageDescription: "",
+        materialsKept: false,
+        damageRequestSent: false,
+        orderAddressCorrect: false,
+        upsWrongAddress: false,
+        cctvChecked: false,
+        neighborsChecked: false,
+        buildingCheck: "",
+        packageFound: "",
+        oldAddressConfirmed: false,
+        customerInsists: "",
+        businessDays: "",
+        photoPackaging: false,
+        photoLabel: false,
+        photoCertificate: false,
+        photoSixSides: false,
+        photoDamage: false,
+        tamperingRecorded: false,
+        damagedItemsKept: false,
+        orderNumber: "",
+        trackingNumber: "",
+        claimNumber: "",
+        claimFiled: false,
+        claimEmailSent: false,
+        approvalStatus: "",
+        customerName: "",
+        replacementItem: "",
+        replacementOrder: "",
+        replacementConfirmed: false,
+        customerNotified: false,
+        finalMode: "",
+        finalOutcome: "",
+        finalNextAction: ""
+      };
+
+      const escapeHtml = (value) => String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      const checked = (condition) => condition ? " checked" : "";
+      const selected = (value, expected) => value === expected ? " selected" : "";
+
+      function statusFor(index) {
+        if (index === state.step) return "Current";
+        if (state.skipped.includes(index)) return "Not needed";
+        if (index < state.step || index < state.maxStep) return "Complete";
+        return "Upcoming";
+      }
+
+      function renderNavigation() {
+        stepList.innerHTML = steps.map((step, index) => {
+          const status = statusFor(index);
+          const isCurrent = index === state.step;
+          const canVisit = isCurrent || (index <= state.maxStep && !state.skipped.includes(index));
+          const buttonClass = isCurrent ? "btn btn-primary" : "btn btn-ghost";
+          return `
+            <li>
+              <span class="viz-badge">${status}</span>
+              <button type="button" class="${buttonClass}" data-step="${index}"${canVisit ? "" : " disabled"}${isCurrent ? ' aria-current="step"' : ""}>
+                ${index + 1}. ${step.label}
+              </button>
+            </li>`;
+        }).join("");
+      }
+
+      function claimTypeView() {
+        return `
+          <p>Choose the concern first. Each option opens its own evidence and decision path.</p>
+          <div class="ldc-fields">
+            <label class="form-label ldc-field-full" for="ldc-intake-customer-name">Customer name for email templates
+              <input class="form-control" id="ldc-intake-customer-name" data-key="customerName" value="${escapeHtml(state.customerName)}" placeholder="Optional — placeholder will be used if blank">
+            </label>
+          </div>
+          <fieldset class="ldc-choice-list">
+            <legend>What happened to the shipment?</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-claim-type" data-key="claimType" value="lost"${checked(state.claimType === "lost")}>
+              <span class="form-check-label">1. Lost package</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-claim-type" data-key="claimType" value="damaged"${checked(state.claimType === "damaged")}>
+              <span class="form-check-label">2. Damaged package or item</span>
+            </label>
+          </fieldset>`;
+      }
+
+      function scenarioView() {
+        if (state.claimType === "damaged") {
+          const customerName = escapeHtml(state.customerName || "{Customer Name}");
+          const transitRequest = `Hello ${customerName},\n\nWe’re sorry to hear about the way your order was delivered. Please know that all our products undergo rigorous quality checks before shipment. While we strive for flawless delivery, some aspects of shipping are unfortunately beyond our direct control. However, that does not excuse the inconvenience you’ve experienced.\n\nWe will file a claim with UPS for this order. To proceed, please send us the following additional photos:\n\n• Clear photos of the damaged item\n• A photo of the packaging material used\n• A close-up photo of the shipping label with the tracking number, which generally starts with 1Z\n• A close-up photo of the box manufacturer’s certificate, which is the round stamp on the outside of the box\n• Two photos showing all six sides of the package—one showing the top and two sides, and another showing the bottom and the opposite sides\n\nPlease keep the damaged item and all packaging materials for now, as UPS may need them during its investigation.`;
+          const intactBoxRequest = `Hello ${customerName},\n\nWe’re sorry to hear that the item arrived damaged even though the shipping box does not appear to be damaged. To help us review this and process the appropriate resolution, please send us:\n\n• Clear photos showing the damage to the filter or air purifier\n• A close-up photo of the shipping label with the tracking number\n• Photos showing all sides of the shipping box and confirming that there is no visible exterior damage\n\nPlease keep the damaged item and its packaging for now while we review the case.`;
+          const requestMessage = state.damageScenario === "transit" ? transitRequest : intactBoxRequest;
+          return `
+            <span class="viz-badge">Damaged claim</span>
+            <fieldset class="ldc-choice-list">
+              <legend>Damage scenario</legend>
+              <label class="form-check">
+                <input class="form-check-input" type="radio" name="ldc-damage-scenario" data-key="damageScenario" value="transit"${checked(state.damageScenario === "transit")}>
+                <span class="form-check-label">Damaged while in transit or the shipping box is visibly damaged</span>
+              </label>
+              <label class="form-check">
+                <input class="form-check-input" type="radio" name="ldc-damage-scenario" data-key="damageScenario" value="item-only"${checked(state.damageScenario === "item-only")}>
+                <span class="form-check-label">Shipping box is not damaged, but the filter or air purifier is damaged</span>
+              </label>
+            </fieldset>
+            ${state.damageScenario ? `
+              <span class="viz-badge">Send before requesting photos</span>
+              <label class="form-label" for="ldc-damage-request">Photo-request email
+                <textarea class="form-control" id="ldc-damage-request" rows="16" readonly>${requestMessage}</textarea>
+              </label>
+              <div class="viz-row">
+                <button type="button" class="btn" data-action="copy-text" data-copy-target="ldc-damage-request" data-copy-status="ldc-damage-request-status">Copy email</button>
+                <span class="text-muted ldc-copy-status" id="ldc-damage-request-status" aria-live="polite"></span>
+              </div>` : ""}
+            <div class="ldc-fields">
+              <label class="form-label ldc-field-full" for="ldc-damage-description">Describe the damage and note whether the package appeared opened or tampered with
+                <textarea class="form-control" id="ldc-damage-description" rows="4" data-key="damageDescription">${escapeHtml(state.damageDescription)}</textarea>
+              </label>
+            </div>
+            <div class="ldc-choice-list">
+              ${state.damageScenario ? `
+                <label class="form-check">
+                  <input class="form-check-input" type="checkbox" data-key="damageRequestSent"${checked(state.damageRequestSent)}>
+                  <span class="form-check-label">Photo-request email was sent to the customer</span>
+                </label>` : ""}
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" data-key="materialsKept"${checked(state.materialsKept)}>
+                <span class="form-check-label">Customer was advised to keep the damaged item, box, and packaging while the claim is reviewed</span>
+              </label>
+            </div>`;
+        }
+
+        return `
+          <span class="viz-badge">Lost claim</span>
+          <label class="form-label" for="ldc-lost-scenario">Delivery scenario
+            <select class="form-select" id="ldc-lost-scenario" data-key="lostScenario">
+              <option value="">Select the exact scenario</option>
+              <option value="wrong-address"${selected(state.lostScenario, "wrong-address")}>UPS delivered to an incorrect address</option>
+              <option value="correct-address-missing"${selected(state.lostScenario, "correct-address-missing")}>UPS marked delivered to the correct address, but the customer did not receive it</option>
+              <option value="old-address"${selected(state.lostScenario, "old-address")}>Package went to an old address that was not updated in time</option>
+              <option value="delayed"${selected(state.lostScenario, "delayed")}>Delayed or stuck in transit</option>
+            </select>
+          </label>`;
+      }
+
+      function requiredChecksView() {
+        if (state.claimType === "damaged") return damageEvidenceView();
+        if (state.lostScenario === "wrong-address") return wrongAddressView();
+        if (state.lostScenario === "correct-address-missing") return missingAtCorrectAddressView();
+        if (state.lostScenario === "old-address") return oldAddressView();
+        return delayedView();
+      }
+
+      function wrongAddressView() {
+        return `
+          <span class="viz-badge">Incorrect delivery address</span>
+          <p>Compare the address on the order with the UPS delivery information. If the customer provided the correct address but UPS delivered elsewhere, file a lost claim.</p>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="orderAddressCorrect"${checked(state.orderAddressCorrect)}>
+              <span class="form-check-label">The shipping address on the order was correct</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="upsWrongAddress"${checked(state.upsWrongAddress)}>
+              <span class="form-check-label">UPS delivery information shows delivery to a different or incorrect address</span>
+            </label>
+          </div>`;
+      }
+
+      function missingAtCorrectAddressView() {
+        return `
+          <span class="viz-badge">Correct address, package missing</span>
+          <p>Ask the customer to complete the local search before filing a claim.</p>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="cctvChecked"${checked(state.cctvChecked)}>
+              <span class="form-check-label">Customer reviewed available CCTV or confirmed that no footage is available</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="neighborsChecked"${checked(state.neighborsChecked)}>
+              <span class="form-check-label">Customer checked with household members or neighbors</span>
+            </label>
+          </div>
+          <label class="form-label" for="ldc-building-check">Apartment or building administration
+            <select class="form-select" id="ldc-building-check" data-key="buildingCheck">
+              <option value="">Select result</option>
+              <option value="checked"${selected(state.buildingCheck, "checked")}>Checked with the building administration</option>
+              <option value="not-applicable"${selected(state.buildingCheck, "not-applicable")}>Not applicable</option>
+            </select>
+          </label>
+          <fieldset class="ldc-choice-list">
+            <legend>Was the package found?</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-package-found" data-key="packageFound" value="yes"${checked(state.packageFound === "yes")}>
+              <span class="form-check-label">Yes — no claim is needed</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-package-found" data-key="packageFound" value="no"${checked(state.packageFound === "no")}>
+              <span class="form-check-label">No — proceed with a lost claim</span>
+            </label>
+          </fieldset>`;
+      }
+
+      function oldAddressView() {
+        return `
+          <span class="viz-badge">Old-address delivery</span>
+          <p>If the address was not updated before the order shipped and UPS delivered it to the old address on the order, advise that a replacement cannot be processed.</p>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="oldAddressConfirmed"${checked(state.oldAddressConfirmed)}>
+              <span class="form-check-label">Delivery to the old address on the order was verified</span>
+            </label>
+          </div>
+          <fieldset class="ldc-choice-list">
+            <legend>Did the customer insist on a replacement?</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-customer-insists" data-key="customerInsists" value="no"${checked(state.customerInsists === "no")}>
+              <span class="form-check-label">No — close without a replacement</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-customer-insists" data-key="customerInsists" value="yes"${checked(state.customerInsists === "yes")}>
+              <span class="form-check-label">Yes — request supervisor approval</span>
+            </label>
+          </fieldset>`;
+      }
+
+      function delayedView() {
+        const days = Number(state.businessDays);
+        const hasDays = state.businessDays !== "" && Number.isFinite(days);
+        return `
+          <span class="viz-badge">Delayed or stuck in transit</span>
+          <p>The delivery timeframe for this workflow is up to 10 business days. If more than 10 business days have passed, file a lost claim immediately.</p>
+          <div class="ldc-fields">
+            <label class="form-label" for="ldc-business-days">Business days since shipment
+              <input class="form-control" id="ldc-business-days" type="number" min="0" data-key="businessDays" value="${escapeHtml(state.businessDays)}">
+            </label>
+          </div>
+          ${hasDays && days <= 10 ? '<p class="text-muted">The shipment is still within the 10-business-day delivery timeframe. Monitor it; no claim yet.</p>' : ""}
+          ${hasDays && days > 10 ? '<p><strong>Required action:</strong> More than 10 business days have passed. Proceed to file a lost claim.</p>' : ""}`;
+      }
+
+      function damageEvidenceView() {
+        if (state.damageScenario === "item-only") {
+          return `
+            <span class="viz-badge">Box intact, item damaged</span>
+            <p>Confirm receipt of the requested photos before processing the replacement.</p>
+            <div class="ldc-choice-list">
+              <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoDamage"${checked(state.photoDamage)}><span class="form-check-label">Clear photos showing the damage to the filter or air purifier</span></label>
+              <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoLabel"${checked(state.photoLabel)}><span class="form-check-label">Close-up photo of the shipping label and tracking number</span></label>
+              <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoSixSides"${checked(state.photoSixSides)}><span class="form-check-label">Photos showing all sides of the intact shipping box</span></label>
+              <label class="form-check"><input class="form-check-input" type="checkbox" data-key="damagedItemsKept"${checked(state.damagedItemsKept)}><span class="form-check-label">Customer will keep the damaged item and packaging while the case is reviewed</span></label>
+            </div>`;
+        }
+
+        return `
+          <span class="viz-badge">Transit-damage evidence</span>
+          <p>Collect all requested evidence before filing the UPS damage claim and processing the replacement.</p>
+          <div class="ldc-choice-list">
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoDamage"${checked(state.photoDamage)}><span class="form-check-label">Clear photos of the damaged filter or air purifier</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoPackaging"${checked(state.photoPackaging)}><span class="form-check-label">Photo of the packaging material</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoLabel"${checked(state.photoLabel)}><span class="form-check-label">Close-up photo of the shipping label with the tracking number, generally starting with 1Z</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoCertificate"${checked(state.photoCertificate)}><span class="form-check-label">Close-up photo of the box manufacturer’s certificate or round stamp</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="photoSixSides"${checked(state.photoSixSides)}><span class="form-check-label">Two photos showing all six sides: top plus two sides, then bottom plus the opposite sides</span></label>
+            <label class="form-check"><input class="form-check-input" type="checkbox" data-key="damagedItemsKept"${checked(state.damagedItemsKept)}><span class="form-check-label">Customer will keep the damaged item and packaging during claim review</span></label>
+          </div>`;
+      }
+
+      function fileClaimView() {
+        const claimLabel = state.claimType === "damaged" ? "UPS damage claim" : "UPS lost claim";
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.orderNumber || "[order number]");
+        const claimUpdate = `Hello ${customerName},\n\nWe’ve filed a claim with UPS regarding order ${orderNumber}. UPS may take up to 10 business days to complete its investigation.\n\nWe’ll monitor the claim regularly and notify you as soon as UPS confirms that it has been approved. If UPS requests any additional information, we’ll let you know.`;
+        return `
+          <span class="viz-badge">${claimLabel}</span>
+          <p>${state.claimType === "damaged" ? "Record the damage claim before processing the replacement." : "Filing a lost claim does not authorize a replacement. Wait for UPS approval or obtain supervisor approval."}</p>
+          <div class="ldc-fields">
+            <label class="form-label" for="ldc-order-number">Medify Air order number
+              <input class="form-control" id="ldc-order-number" data-key="orderNumber" value="${escapeHtml(state.orderNumber)}">
+            </label>
+            <label class="form-label" for="ldc-tracking-number">UPS tracking number
+              <input class="form-control" id="ldc-tracking-number" data-key="trackingNumber" value="${escapeHtml(state.trackingNumber)}">
+            </label>
+            <label class="form-label ldc-field-full" for="ldc-claim-number">UPS claim or case number
+              <input class="form-control" id="ldc-claim-number" data-key="claimNumber" value="${escapeHtml(state.claimNumber)}">
+            </label>
+          </div>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="claimFiled"${checked(state.claimFiled)}>
+              <span class="form-check-label">UPS confirms the claim was filed</span>
+            </label>
+          </div>
+          ${state.claimFiled ? `
+            <span class="viz-badge">Send after filing</span>
+            <label class="form-label" for="ldc-claim-email">Claim-investigation email
+              <textarea class="form-control" id="ldc-claim-email" rows="9" readonly>${claimUpdate}</textarea>
+            </label>
+            <div class="viz-row">
+              <button type="button" class="btn" data-action="copy-text" data-copy-target="ldc-claim-email" data-copy-status="ldc-claim-email-status">Copy email</button>
+              <span class="text-muted ldc-copy-status" id="ldc-claim-email-status" aria-live="polite"></span>
+            </div>
+            <div class="ldc-choice-list">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" data-key="claimEmailSent"${checked(state.claimEmailSent)}>
+                <span class="form-check-label">Customer was advised that the UPS investigation may take up to 10 business days</span>
+              </label>
+            </div>` : ""}`;
+      }
+
+      function approvalView() {
+        const oldAddressOnly = state.lostScenario === "old-address";
+        return `
+          <span class="viz-badge">Replacement locked</span>
+          <p>A replacement can be processed only after UPS approves the filed claim or a supervisor approves the replacement.</p>
+          <fieldset class="ldc-choice-list">
+            <legend>Verified approval status</legend>
+            ${oldAddressOnly ? "" : `
+              <label class="form-check">
+                <input class="form-check-input" type="radio" name="ldc-approval" data-key="approvalStatus" value="ups-approved"${checked(state.approvalStatus === "ups-approved")}>
+                <span class="form-check-label">UPS approved the filed claim</span>
+              </label>`}
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-approval" data-key="approvalStatus" value="supervisor-approved"${checked(state.approvalStatus === "supervisor-approved")}>
+              <span class="form-check-label">Supervisor approved the replacement</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-approval" data-key="approvalStatus" value="pending"${checked(state.approvalStatus === "pending")}>
+              <span class="form-check-label">UPS or supervisor review is still pending — do not replace</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="ldc-approval" data-key="approvalStatus" value="denied"${checked(state.approvalStatus === "denied")}>
+              <span class="form-check-label">Claim or replacement request was not approved</span>
+            </label>
+          </fieldset>`;
+      }
+
+      function replacementView() {
+        const approvalLabel = state.claimType === "damaged"
+          ? state.damageScenario === "transit" ? "Damage evidence complete; UPS claim filed" : "Item-damage evidence complete"
+          : state.approvalStatus === "ups-approved" ? "UPS claim approved" : "Supervisor approved";
+        return `
+          <span class="viz-badge">${approvalLabel}</span>
+          <p>${state.claimType === "damaged" ? "The required damage information has been received. Process and record the replacement." : "The approval gate is complete. Record the verified replacement details."}</p>
+          <div class="ldc-fields">
+            <label class="form-label" for="ldc-customer-name">Customer name
+              <input class="form-control" id="ldc-customer-name" data-key="customerName" value="${escapeHtml(state.customerName)}">
+            </label>
+            <label class="form-label" for="ldc-replacement-item">Replacement item
+              <input class="form-control" id="ldc-replacement-item" data-key="replacementItem" value="${escapeHtml(state.replacementItem)}">
+            </label>
+            <label class="form-label ldc-field-full" for="ldc-replacement-order">New replacement order number
+              <input class="form-control" id="ldc-replacement-order" data-key="replacementOrder" value="${escapeHtml(state.replacementOrder)}">
+            </label>
+          </div>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="replacementConfirmed"${checked(state.replacementConfirmed)}>
+              <span class="form-check-label">Replacement order was successfully created and verified</span>
+            </label>
+          </div>`;
+      }
+
+      function notifyView() {
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const replacementOrder = escapeHtml(state.replacementOrder || "[order number]");
+        const standardMessage = `Hello ${customerName},\n\nWe’ve created your replacement order, and your new order number is ${replacementOrder}.\n\nOnce your order has been processed, it will be fulfilled and shipped within 1–3 business days. Delivery typically takes 3–7 business days after shipment. An email confirmation will be sent once your order ships and the tracking information is available.`;
+        const transitDamageMessage = `${standardMessage}\n\nPlease keep the damaged filter or air purifier and all packaging materials for now, as UPS may need them during its investigation.`;
+        const intactBoxMessage = `${standardMessage}\n\nPlease keep the damaged filter or air purifier and its packaging for now while we complete the case review.`;
+        const message = state.claimType === "damaged"
+          ? state.damageScenario === "transit" ? transitDamageMessage : intactBoxMessage
+          : standardMessage;
+        return `
+          <span class="viz-badge">Approved replacement only</span>
+          <label class="form-label" for="ldc-message">Customer-ready update
+            <textarea class="form-control" id="ldc-message" rows="8" readonly>${message}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-message">Copy response</button>
+            <span class="text-muted ldc-copy-status" id="ldc-copy-status" aria-live="polite"></span>
+          </div>
+          <div class="ldc-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="customerNotified"${checked(state.customerNotified)}>
+              <span class="form-check-label">Customer was notified of the verified replacement</span>
+            </label>
+          </div>`;
+      }
+
+      function endingEmail() {
+        const customerName = escapeHtml(state.customerName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.orderNumber || "[order number]");
+        const replacementOrder = escapeHtml(state.replacementOrder || "[replacement order number]");
+
+        if (state.finalMode === "found") {
+          return `Hello ${customerName},\n\nThank you for checking the delivery area and nearby locations. We’re glad to know that the package has been located. No UPS claim is needed at this time.\n\nIf you notice any issue with the items in your order, please let us know and we’ll be happy to assist.`;
+        }
+
+        if (state.finalMode === "old-address") {
+          return `Hello ${customerName},\n\nWe reviewed the tracking information and confirmed that the package was delivered to the shipping address listed on the order. Because the address was not updated before the order shipped, we’re unable to process a replacement for this delivery.\n\nWe understand this may be disappointing, and we appreciate your understanding.`;
+        }
+
+        if (state.finalMode === "within-window") {
+          return `Hello ${customerName},\n\nWe reviewed the tracking information for your order. The shipment is still within the delivery timeframe of up to 10 business days, so a UPS claim does not need to be filed yet.\n\nPlease continue monitoring the tracking information. If the package has not arrived after more than 10 business days, please contact us so we can file a claim with UPS.`;
+        }
+
+        if (state.finalMode === "blocked" && state.claimFiled) {
+          return `Hello ${customerName},\n\nWe’ve filed a claim with UPS regarding order ${orderNumber}. UPS may take up to 10 business days to complete its investigation.\n\nWe’ll monitor the claim regularly and notify you as soon as UPS confirms that it has been approved. If UPS requests any additional information, we’ll let you know.`;
+        }
+
+        if (state.finalMode === "blocked") {
+          return `Hello ${customerName},\n\nWe’ve submitted the replacement request for supervisor review. No replacement has been processed at this time.\n\nWe’ll update you once the supervisor provides a decision.`;
+        }
+
+        if (state.finalMode === "denied" && state.claimFiled) {
+          return `Hello ${customerName},\n\nUPS has completed its review of the claim for order ${orderNumber}, but the claim was not approved. Because the claim was not approved, we’re unable to process a replacement at this time.\n\nIf any new supporting information becomes available, please let us know so we can determine whether further review is possible.`;
+        }
+
+        if (state.finalMode === "denied") {
+          return `Hello ${customerName},\n\nThe replacement request was reviewed, but it was not approved. As a result, we’re unable to process a replacement for this delivery.\n\nWe appreciate your understanding.`;
+        }
+
+        if (state.finalMode === "replacement") {
+          const base = `Hello ${customerName},\n\nWe’ve processed your replacement order, and your new order number is ${replacementOrder}.\n\nOnce your order has been processed, it will be fulfilled and shipped within 1–3 business days. Delivery typically takes 3–7 business days after shipment. An email confirmation will be sent once your order ships and the tracking information is available.`;
+          if (state.claimType === "damaged" && state.damageScenario === "transit") {
+            return `${base}\n\nPlease keep the damaged filter or air purifier and all packaging materials for now, as UPS may need them during its investigation.`;
+          }
+          if (state.claimType === "damaged") {
+            return `${base}\n\nPlease keep the damaged filter or air purifier and its packaging for now while we complete the case review.`;
+          }
+          return base;
+        }
+
+        return `Hello ${customerName},\n\nWe’ve reviewed your delivery concern. We’ll contact you with the next verified update as soon as it becomes available.`;
+      }
+
+      function completeView() {
+        const typeLabel = state.claimType === "damaged" ? "Damaged" : "Lost";
+        const scenarioLabels = {
+          "wrong-address": "UPS delivered to an incorrect address",
+          "correct-address-missing": "Marked delivered correctly but not received",
+          "old-address": "Delivered to an old address",
+          delayed: "Delayed or stuck in transit"
+        };
+        const approvalLabels = {
+          "ups-approved": "UPS approved the claim",
+          "supervisor-approved": "Supervisor approved the replacement",
+          pending: "Review still pending",
+          denied: "Not approved"
+        };
+        const damageScenarioLabels = {
+          transit: "Damaged while in transit",
+          "item-only": "Box intact; filter or air purifier damaged"
+        };
+        const rows = [
+          ["Claim type", typeLabel],
+          ["Scenario", state.claimType === "damaged" ? damageScenarioLabels[state.damageScenario] || "Damage not recorded" : scenarioLabels[state.lostScenario] || "Not recorded"],
+          ["UPS claim number", state.claimNumber || "Not filed"],
+          ["Approval", approvalLabels[state.approvalStatus] || "Not required"],
+          ["Replacement order", state.replacementOrder || "Not created"],
+          ["Outcome", state.finalOutcome || "Review required"],
+          ["Next action", state.finalNextAction || "None"]
+        ];
+        const finalEmail = endingEmail();
+        return `
+          <div class="table-responsive">
+            <table class="table table-sm ldc-summary-table">
+              <thead><tr><th scope="col">Case field</th><th scope="col">Result</th></tr></thead>
+              <tbody>${rows.map((row) => `<tr><th scope="row">${row[0]}</th><td>${escapeHtml(row[1])}</td></tr>`).join("")}</tbody>
+            </table>
+          </div>
+          <span class="viz-badge">Email for this ending</span>
+          <label class="form-label" for="ldc-ending-email">Customer-ready response
+            <textarea class="form-control" id="ldc-ending-email" rows="11" readonly>${finalEmail}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-text" data-copy-target="ldc-ending-email" data-copy-status="ldc-ending-email-status">Copy email</button>
+            <span class="text-muted ldc-copy-status" id="ldc-ending-email-status" aria-live="polite"></span>
+          </div>`;
+      }
+
+      function renderContent() {
+        const views = [
+          claimTypeView,
+          scenarioView,
+          requiredChecksView,
+          fileClaimView,
+          approvalView,
+          replacementView,
+          notifyView,
+          completeView
+        ];
+        content.innerHTML = views[state.step]();
+      }
+
+      function nextLabel() {
+        if (state.step === 2 && state.lostScenario === "old-address") {
+          return state.customerInsists === "yes" ? "Request supervisor approval" : "Close without replacement";
+        }
+        if (state.step === 4 && state.approvalStatus === "pending") return "Finish without replacement";
+        if (state.step === 4 && state.approvalStatus === "denied") return "Close without replacement";
+        if (state.step === 6) return "Complete case";
+        return "Continue";
+      }
+
+      function renderActions() {
+        if (state.step === 7) {
+          actions.innerHTML = `<button type="button" class="btn btn-ghost" data-step="${state.reviewStep}">Back to review</button>`;
+          return;
+        }
+        actions.innerHTML = `
+          <button type="button" class="btn btn-ghost" data-action="back"${state.step === 0 ? " disabled" : ""}>Back</button>
+          <button type="button" class="btn btn-primary" data-action="next">${nextLabel()}</button>`;
+      }
+
+      function render() {
+        const isComplete = state.step === 7;
+        stepCount.textContent = `Step ${state.step + 1} of ${steps.length}`;
+        overallStatus.textContent = isComplete ? "Case path complete" : "In progress";
+        currentStatus.textContent = isComplete ? "Outcome" : "Current";
+        currentTitle.textContent = steps[state.step].label;
+        nextAction.textContent = isComplete
+          ? "Review the final outcome and next action."
+          : `Next required action: ${steps[state.step].action}`;
+        const percent = ((state.step + 1) / steps.length) * 100;
+        progress.setAttribute("aria-valuenow", String(state.step + 1));
+        progressValue.style.width = `${percent}%`;
+        error.textContent = "";
+        renderNavigation();
+        renderContent();
+        renderActions();
+      }
+
+      function fail(message) {
+        error.textContent = message;
+      }
+
+      function moveTo(next, skipped) {
+        state.skipped = Array.from(new Set([
+          ...state.skipped.filter((index) => index < state.step),
+          ...(skipped || [])
+        ]));
+        state.step = next;
+        state.maxStep = next;
+        state.finalMode = "";
+        render();
+      }
+
+      function finish(mode, outcome, nextActionText, reviewStep, skipped) {
+        state.finalMode = mode;
+        state.finalOutcome = outcome;
+        state.finalNextAction = nextActionText;
+        state.reviewStep = reviewStep;
+        state.skipped = Array.from(new Set([
+          ...state.skipped.filter((index) => index <= reviewStep),
+          ...(skipped || [])
+        ]));
+        state.step = 7;
+        state.maxStep = 7;
+        render();
+      }
+
+      function validateDamageEvidence() {
+        if (state.damageScenario === "item-only") {
+          return state.photoDamage && state.photoLabel && state.photoSixSides && state.damagedItemsKept;
+        }
+        return state.photoDamage && state.photoPackaging && state.photoLabel && state.photoCertificate &&
+          state.photoSixSides && state.damagedItemsKept;
+      }
+
+      function replacementSkippedSteps() {
+        if (state.claimType === "damaged" && state.damageScenario === "item-only") return [3, 4];
+        if (state.claimType === "damaged" && state.damageScenario === "transit") return [4];
+        if (state.lostScenario === "old-address") return [3];
+        return [];
+      }
+
+      function advance() {
+        if (state.step === 0) {
+          if (!state.claimType) return fail("Choose Lost package or Damaged package or item.");
+          state.lostScenario = state.claimType === "lost" ? state.lostScenario : "";
+          state.damageScenario = state.claimType === "damaged" ? state.damageScenario : "";
+          return moveTo(1, []);
+        }
+
+        if (state.step === 1) {
+          if (state.claimType === "lost" && !state.lostScenario) return fail("Select the exact lost-package scenario.");
+          if (state.claimType === "damaged" && (!state.damageScenario || !state.damageDescription.trim() || !state.damageRequestSent || !state.materialsKept)) {
+            return fail("Select the damage scenario, describe the damage, send the photo-request email, and confirm that the customer will keep the item and packaging.");
+          }
+          state.claimFiled = false;
+          state.claimEmailSent = false;
+          state.claimNumber = "";
+          state.approvalStatus = "";
+          state.replacementConfirmed = false;
+          state.replacementOrder = "";
+          state.customerNotified = false;
+          return moveTo(2, []);
+        }
+
+        if (state.step === 2) {
+          if (state.claimType === "damaged") {
+            if (!validateDamageEvidence()) return fail("Complete every required damage-evidence item before continuing.");
+            if (state.damageScenario === "item-only") return moveTo(5, [3, 4]);
+            return moveTo(3, []);
+          }
+
+          if (state.lostScenario === "wrong-address") {
+            if (!state.orderAddressCorrect || !state.upsWrongAddress) return fail("Verify both the correct order address and UPS delivery to a different address.");
+            return moveTo(3, []);
+          }
+
+          if (state.lostScenario === "correct-address-missing") {
+            if (!state.cctvChecked || !state.neighborsChecked || !state.buildingCheck || !state.packageFound) {
+              return fail("Complete the local search and record whether the package was found.");
+            }
+            if (state.packageFound === "yes") {
+              return finish("found", "Package located; no UPS claim needed", "Close the delivery concern.", 2, [3, 4, 5, 6]);
+            }
+            return moveTo(3, []);
+          }
+
+          if (state.lostScenario === "old-address") {
+            if (!state.oldAddressConfirmed || !state.customerInsists) return fail("Verify the old-address delivery and record whether the customer insists on a replacement.");
+            if (state.customerInsists === "no") {
+              return finish("old-address", "Replacement not processed because the address was not updated in time", "Close the case after explaining the verified outcome.", 2, [3, 4, 5, 6]);
+            }
+            state.approvalStatus = "";
+            return moveTo(4, [3]);
+          }
+
+          const days = Number(state.businessDays);
+          if (state.businessDays === "" || !Number.isFinite(days) || days < 0) return fail("Enter the number of business days since shipment.");
+          if (days <= 10) {
+            return finish("within-window", "Shipment is still within the 10-business-day delivery timeframe", "Monitor the shipment; do not file a claim yet.", 2, [3, 4, 5, 6]);
+          }
+          return moveTo(3, []);
+        }
+
+        if (state.step === 3) {
+          if (!state.orderNumber.trim() || !state.trackingNumber.trim() || !state.claimNumber.trim() || !state.claimFiled || !state.claimEmailSent) {
+            return fail("Enter the verified order, tracking, and claim numbers, confirm the claim was filed, and send the 10-business-day investigation email.");
+          }
+          if (state.claimType === "damaged") return moveTo(5, [4]);
+          return moveTo(4, []);
+        }
+
+        if (state.step === 4) {
+          if (!state.approvalStatus) return fail("Select the verified approval status.");
+          if (state.approvalStatus === "pending") {
+            return finish("blocked", "Replacement is on hold while approval remains pending", "Wait for UPS approval or documented supervisor approval before replacing.", 4, [5, 6]);
+          }
+          if (state.approvalStatus === "denied") {
+            return finish("denied", "Replacement not processed because the claim or exception was not approved", "Close the case or request a new supervisor review only if warranted.", 4, [5, 6]);
+          }
+          state.skipped = state.skipped.filter((index) => index < 5);
+          return moveTo(5, state.lostScenario === "old-address" ? [3] : []);
+        }
+
+        if (state.step === 5) {
+          if (!state.customerName.trim() || !state.replacementItem.trim() || !state.replacementOrder.trim() || !state.replacementConfirmed) {
+            return fail("Enter the customer, replacement item, and new order number, then confirm the order was created.");
+          }
+          return moveTo(6, replacementSkippedSteps());
+        }
+
+        if (state.step === 6) {
+          if (!state.customerNotified) return fail("Confirm that the customer was notified.");
+          return finish("replacement", "Replacement created and customer notified", "Monitor fulfillment, tracking, and any UPS investigation as needed.", 6, replacementSkippedSteps());
+        }
+      }
+
+      function goBack() {
+        if (state.step <= 0) return;
+        if (state.step === 5 && state.skipped.includes(4)) {
+          state.step = state.skipped.includes(3) ? 2 : 3;
+        } else if (state.step === 4 && state.skipped.includes(3)) {
+          state.step = 2;
+        } else {
+          state.step -= 1;
+        }
+        render();
+      }
+
+      function updateState(target) {
+        const key = target.dataset.key;
+        if (!key) return;
+        state[key] = target.type === "checkbox" ? target.checked : target.value;
+        if (key === "damageScenario") {
+          state.damageRequestSent = false;
+          state.photoDamage = false;
+          state.photoPackaging = false;
+          state.photoLabel = false;
+          state.photoCertificate = false;
+          state.photoSixSides = false;
+          state.damagedItemsKept = false;
+        }
+        if (key === "claimFiled" && !state.claimFiled) state.claimEmailSent = false;
+        const conditionalKeys = [
+          "claimType",
+          "lostScenario",
+          "damageScenario",
+          "packageFound",
+          "customerInsists",
+          "claimFiled",
+          "approvalStatus"
+        ];
+        if (conditionalKeys.includes(key)) render();
+      }
+
+      root.addEventListener("input", (event) => updateState(event.target));
+      root.addEventListener("change", (event) => updateState(event.target));
+
+      root.addEventListener("click", async (event) => {
+        const stepButton = event.target.closest("[data-step]");
+        if (stepButton && !stepButton.disabled) {
+          const targetStep = Number(stepButton.dataset.step);
+          if (state.step === 7 && targetStep < 7) {
+            state.step = targetStep;
+            state.maxStep = targetStep;
+            state.finalMode = "";
+            state.skipped = state.skipped.filter((index) => index <= targetStep);
+          } else {
+            state.step = targetStep;
+          }
+          render();
+          return;
+        }
+
+        const action = event.target.closest("[data-action]")?.dataset.action;
+        if (action === "next") advance();
+        if (action === "back") goBack();
+        if (action === "copy-text") {
+          const button = event.target.closest("[data-copy-target]");
+          const message = root.querySelector(`#${button.dataset.copyTarget}`);
+          const copyStatus = root.querySelector(`#${button.dataset.copyStatus}`);
+          try {
+            await navigator.clipboard.writeText(message.value);
+            copyStatus.textContent = "Email copied.";
+          } catch (copyError) {
+            message.focus();
+            message.select();
+            copyStatus.textContent = "Email selected for copying.";
+          }
+        }
+        if (action === "copy-message") {
+          const message = root.querySelector("#ldc-message");
+          const copyStatus = root.querySelector("#ldc-copy-status");
+          try {
+            await navigator.clipboard.writeText(message.value);
+            copyStatus.textContent = "Response copied.";
+          } catch (copyError) {
+            message.focus();
+            message.select();
+            copyStatus.textContent = "Response selected for copying.";
+          }
+        }
+      });
+
+      render();
+    })();
+  </script>
+</div>

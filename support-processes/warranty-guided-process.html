@@ -1,0 +1,662 @@
+<div id="warranty-guided-process">
+  <style>
+    #warranty-guided-process {
+      width: 100%;
+      color: var(--foreground);
+    }
+
+    #warranty-guided-process .wgp-topline,
+    #warranty-guided-process .wgp-card-heading,
+    #warranty-guided-process .wgp-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    #warranty-guided-process .wgp-progress-track {
+      width: 100%;
+      height: 0.3rem;
+      margin: 0.75rem 0 1rem;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--muted);
+    }
+
+    #warranty-guided-process .wgp-progress-value {
+      height: 100%;
+      background: var(--primary);
+      transition: width 180ms ease;
+    }
+
+    #warranty-guided-process .wgp-layout {
+      display: grid;
+      grid-template-columns: minmax(11rem, 0.7fr) minmax(0, 2fr);
+      gap: 1rem;
+      align-items: start;
+    }
+
+    #warranty-guided-process .wgp-nav ol {
+      display: grid;
+      gap: 0.5rem;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    #warranty-guided-process .wgp-nav li {
+      display: grid;
+      grid-template-columns: minmax(4.5rem, auto) minmax(0, 1fr);
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    #warranty-guided-process .wgp-nav button {
+      text-align: left;
+    }
+
+    #warranty-guided-process .wgp-card-heading {
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    #warranty-guided-process .wgp-card-heading h2,
+    #warranty-guided-process .wgp-card-heading p {
+      margin-top: 0;
+    }
+
+    #warranty-guided-process .wgp-fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    #warranty-guided-process .wgp-field-full {
+      grid-column: 1 / -1;
+    }
+
+    #warranty-guided-process .wgp-choice-list {
+      display: grid;
+      gap: 0.65rem;
+      margin: 1rem 0;
+    }
+
+    #warranty-guided-process .wgp-actions {
+      margin-top: 1rem;
+    }
+
+    #warranty-guided-process .wgp-error:empty,
+    #warranty-guided-process .wgp-copy-status:empty {
+      display: none;
+    }
+
+    #warranty-guided-process .wgp-code-line {
+      margin: 0.75rem 0;
+    }
+
+    #warranty-guided-process .wgp-summary-table th {
+      width: 42%;
+    }
+
+    @media (max-width: 620px) {
+      #warranty-guided-process .wgp-layout,
+      #warranty-guided-process .wgp-fields {
+        grid-template-columns: 1fr;
+      }
+
+      #warranty-guided-process .wgp-field-full {
+        grid-column: auto;
+      }
+
+      #warranty-guided-process .wgp-nav ol {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      #warranty-guided-process .wgp-nav li {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      #warranty-guided-process .wgp-progress-value {
+        transition: none;
+      }
+    }
+  </style>
+
+  <div class="wgp-topline">
+    <span class="viz-badge" id="wgp-step-count">Step 1 of 8</span>
+    <span id="wgp-overall-status">In progress</span>
+  </div>
+  <div class="wgp-progress-track" role="progressbar" aria-label="Warranty process progress" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+    <div class="wgp-progress-value" style="width: 12.5%"></div>
+  </div>
+
+  <div class="wgp-layout">
+    <nav class="wgp-nav" aria-label="Warranty process steps">
+      <ol id="wgp-step-list"></ol>
+    </nav>
+
+    <section class="card" aria-live="polite">
+      <div class="wgp-card-heading">
+        <div>
+          <span class="viz-badge" id="wgp-current-status">Current</span>
+          <h2 id="wgp-current-title">Troubleshoot</h2>
+          <p class="text-muted" id="wgp-next-action">Next required action: document the model and troubleshooting result.</p>
+        </div>
+      </div>
+
+      <div id="wgp-step-content"></div>
+      <p class="text-destructive wgp-error" id="wgp-error" role="alert"></p>
+      <div class="wgp-actions" id="wgp-actions"></div>
+    </section>
+  </div>
+
+  <script>
+    (() => {
+      const root = document.getElementById("warranty-guided-process");
+      const stepList = root.querySelector("#wgp-step-list");
+      const content = root.querySelector("#wgp-step-content");
+      const actions = root.querySelector("#wgp-actions");
+      const error = root.querySelector("#wgp-error");
+      const stepCount = root.querySelector("#wgp-step-count");
+      const overallStatus = root.querySelector("#wgp-overall-status");
+      const currentStatus = root.querySelector("#wgp-current-status");
+      const currentTitle = root.querySelector("#wgp-current-title");
+      const nextAction = root.querySelector("#wgp-next-action");
+      const progress = root.querySelector(".wgp-progress-track");
+      const progressValue = root.querySelector(".wgp-progress-value");
+
+      const steps = [
+        { label: "Troubleshoot", action: "document the model and troubleshooting result." },
+        { label: "Video & source", action: "receive the video and identify the purchase source." },
+        { label: "Proof & eligibility", action: "verify the order, invoice, and current warranty requirements." },
+        { label: "Confirm information", action: "review or reconfirm the customer’s contact and shipping details." },
+        { label: "Shopify customer", action: "select an existing customer record or create one." },
+        { label: "Replacement order", action: "review the replacement details and create the order." },
+        { label: "Notify customer", action: "send the verified replacement confirmation." },
+        { label: "Complete", action: "review the final case outcome." }
+      ];
+
+      const state = {
+        step: 0,
+        maxStep: 0,
+        closedMode: "",
+        exactModel: "",
+        outcome: "",
+        videoReceived: false,
+        source: "",
+        medifyOrderFound: "",
+        proofReceived: false,
+        originalOrder: "",
+        warrantyVerified: false,
+        oowApproved: false,
+        oowShared: false,
+        registration: "",
+        registeredInfoReviewed: false,
+        completeName: "",
+        address: "",
+        email: "",
+        phone: "",
+        customerExists: "",
+        customerRecordReviewed: false,
+        customerCreated: false,
+        replacementModel: "",
+        replacementCode: "",
+        orderReviewed: false,
+        orderCreated: false,
+        replacementOrder: "",
+        customerNotified: false
+      };
+
+      const escapeHtml = (value) => String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+
+      const checked = (condition) => condition ? " checked" : "";
+      const selected = (value, expected) => value === expected ? " selected" : "";
+
+      function statusFor(index) {
+        if (index === state.step) return "Current";
+        if (state.step === 7 && state.closedMode && index > 0 && index < 7) {
+          if (state.closedMode === "resolved") return "Not needed";
+          if (state.closedMode === "oow" && index > 2) return "Not needed";
+        }
+        if (index < state.step || index < state.maxStep) return "Complete";
+        return "Upcoming";
+      }
+
+      function renderNavigation() {
+        stepList.innerHTML = steps.map((step, index) => {
+          const status = statusFor(index);
+          const isCurrent = index === state.step;
+          const canVisit = index <= state.maxStep || index === state.step;
+          const buttonClass = isCurrent ? "btn btn-primary" : "btn btn-ghost";
+          return `
+            <li>
+              <span class="viz-badge">${status}</span>
+              <button type="button" class="${buttonClass}" data-step="${index}"${canVisit ? "" : " disabled"}${isCurrent ? ' aria-current="step"' : ""}>
+                ${index + 1}. ${step.label}
+              </button>
+            </li>`;
+        }).join("");
+      }
+
+      function troubleshootView() {
+        return `
+          <p>Run the correct model-specific troubleshooting first. The replacement path opens only when the issue remains unresolved.</p>
+          <div class="wgp-fields">
+            <label class="form-label wgp-field-full" for="wgp-model">Exact model and version
+              <input class="form-control" id="wgp-model" data-key="exactModel" value="${escapeHtml(state.exactModel)}" placeholder="Example: model and hardware version">
+            </label>
+          </div>
+          <fieldset class="wgp-choice-list">
+            <legend>Troubleshooting result</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-outcome" data-key="outcome" value="not-resolved"${checked(state.outcome === "not-resolved")}>
+              <span class="form-check-label">Issue did not resolve</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-outcome" data-key="outcome" value="resolved"${checked(state.outcome === "resolved")}>
+              <span class="form-check-label">Issue resolved — close the warranty path</span>
+            </label>
+          </fieldset>`;
+      }
+
+      function evidenceView() {
+        return `
+          <p>Request a short video showing the problem, then identify where the unit was purchased.</p>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="videoReceived"${checked(state.videoReceived)}>
+              <span class="form-check-label">Short troubleshooting video received</span>
+            </label>
+          </div>
+          <label class="form-label" for="wgp-source">Purchase source
+            <select class="form-select" id="wgp-source" data-key="source">
+              <option value="">Select purchase source</option>
+              <option value="medify"${selected(state.source, "medify")}>Medify Air</option>
+              <option value="reseller"${selected(state.source, "reseller")}>Authorized reseller</option>
+              <option value="amazon"${selected(state.source, "amazon")}>Amazon</option>
+              <option value="unauthorized"${selected(state.source, "unauthorized")}>Unauthorized seller or other ineligible source</option>
+            </select>
+          </label>`;
+      }
+
+      function eligibilityView() {
+        if (state.source === "unauthorized") {
+          return `
+            <span class="viz-badge">Out-of-warranty branch</span>
+            <h3>Stop the warranty replacement path</h3>
+            <p>Verify the purchase source and current offer before presenting the approved 20% out-of-warranty option.</p>
+            <div class="wgp-choice-list">
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" data-key="oowApproved"${checked(state.oowApproved)}>
+                <span class="form-check-label">Current 20% out-of-warranty offer verified</span>
+              </label>
+              <label class="form-check">
+                <input class="form-check-input" type="checkbox" data-key="oowShared"${checked(state.oowShared)}>
+                <span class="form-check-label">Offer shared with the customer</span>
+              </label>
+            </div>`;
+        }
+
+        if (state.source === "medify") {
+          return `
+            <span class="viz-badge">Medify Air purchase</span>
+            <h3>Search the account before asking the customer</h3>
+            <fieldset class="wgp-choice-list">
+              <legend>Related order</legend>
+              <label class="form-check">
+                <input class="form-check-input" type="radio" name="wgp-order-found" data-key="medifyOrderFound" value="yes"${checked(state.medifyOrderFound === "yes")}>
+                <span class="form-check-label">Order found on the customer’s account</span>
+              </label>
+              <label class="form-check">
+                <input class="form-check-input" type="radio" name="wgp-order-found" data-key="medifyOrderFound" value="no"${checked(state.medifyOrderFound === "no")}>
+                <span class="form-check-label">Order not found — ask for the order number</span>
+              </label>
+            </fieldset>
+            ${eligibleProofFields("Original Medify Air order number")}`;
+        }
+
+        const sourceLabel = state.source === "amazon" ? "Amazon purchase" : "Authorized-reseller purchase";
+        const sourceInstruction = state.source === "amazon"
+          ? "Confirm whether Amazon or Medify Air handles the case under the current applicable policy."
+          : "Confirm that the seller is authorized under the current warranty terms.";
+        return `
+          <span class="viz-badge">${sourceLabel}</span>
+          <h3>Collect the invoice before proceeding</h3>
+          <p>${sourceInstruction}</p>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="proofReceived"${checked(state.proofReceived)}>
+              <span class="form-check-label">Invoice or acceptable proof of purchase received</span>
+            </label>
+          </div>
+          ${eligibleProofFields("Invoice or order reference")}`;
+      }
+
+      function eligibleProofFields(label) {
+        return `
+          <div class="wgp-fields">
+            <label class="form-label wgp-field-full" for="wgp-original-order">${label}
+              <input class="form-control" id="wgp-original-order" data-key="originalOrder" value="${escapeHtml(state.originalOrder)}" placeholder="Enter verified reference">
+            </label>
+          </div>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="warrantyVerified"${checked(state.warrantyVerified)}>
+              <span class="form-check-label">Registration, evidence, purchase source, and current warranty requirements verified</span>
+            </label>
+          </div>`;
+      }
+
+      function customerInfoView() {
+        const detailFields = state.registration === "older" ? `
+          <div class="wgp-fields">
+            <label class="form-label" for="wgp-name">Complete name
+              <input class="form-control" id="wgp-name" data-key="completeName" value="${escapeHtml(state.completeName)}">
+            </label>
+            <label class="form-label" for="wgp-email">Email
+              <input class="form-control" id="wgp-email" data-key="email" type="email" value="${escapeHtml(state.email)}">
+            </label>
+            <label class="form-label" for="wgp-phone">Contact number
+              <input class="form-control" id="wgp-phone" data-key="phone" value="${escapeHtml(state.phone)}">
+            </label>
+            <label class="form-label wgp-field-full" for="wgp-address">Complete shipping address
+              <textarea class="form-control" id="wgp-address" data-key="address">${escapeHtml(state.address)}</textarea>
+            </label>
+          </div>` : state.registration === "recent" ? `
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="registeredInfoReviewed"${checked(state.registeredInfoReviewed)}>
+              <span class="form-check-label">Registered contact and shipping details reviewed and confirmed current</span>
+            </label>
+          </div>
+          <p class="text-muted">Do not ask the customer to repeat an address that is already current and verified.</p>` : "";
+
+        return `
+          <fieldset class="wgp-choice-list">
+            <legend>Registration information</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-registration" data-key="registration" value="recent"${checked(state.registration === "recent")}>
+              <span class="form-check-label">Recently registered; information is available</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-registration" data-key="registration" value="older"${checked(state.registration === "older")}>
+              <span class="form-check-label">Older registration or information needs confirmation</span>
+            </label>
+          </fieldset>
+          ${detailFields}`;
+      }
+
+      function shopifyCustomerView() {
+        const followUp = state.customerExists === "yes" ? `
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="customerRecordReviewed"${checked(state.customerRecordReviewed)}>
+              <span class="form-check-label">Existing customer record selected and details reviewed</span>
+            </label>
+          </div>` : state.customerExists === "no" ? `
+          <p><strong>Shopify path:</strong> Customers → Add customer → enter verified details → Save → Create order.</p>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="customerCreated"${checked(state.customerCreated)}>
+              <span class="form-check-label">New Shopify customer record created and reviewed</span>
+            </label>
+          </div>` : "";
+        return `
+          <fieldset class="wgp-choice-list">
+            <legend>Does the customer already have a Shopify customer record?</legend>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-customer" data-key="customerExists" value="yes"${checked(state.customerExists === "yes")}>
+              <span class="form-check-label">Yes — use the existing customer record</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="radio" name="wgp-customer" data-key="customerExists" value="no"${checked(state.customerExists === "no")}>
+              <span class="form-check-label">No — create a customer record first</span>
+            </label>
+          </fieldset>
+          ${followUp}`;
+      }
+
+      function replacementOrderView() {
+        const preview = state.replacementCode || state.originalOrder
+          ? `${escapeHtml(state.replacementCode || "[replacement code]")} | ${escapeHtml(state.originalOrder || "[original order number]")}`
+          : "[Replacement Code] | [Original Order Number]";
+        return `
+          <div class="wgp-fields">
+            <label class="form-label wgp-field-full" for="wgp-replacement-model">Approved replacement model and version
+              <input class="form-control" id="wgp-replacement-model" data-key="replacementModel" value="${escapeHtml(state.replacementModel)}">
+            </label>
+            <label class="form-label" for="wgp-replacement-code">Approved replacement code
+              <input class="form-control" id="wgp-replacement-code" data-key="replacementCode" value="${escapeHtml(state.replacementCode)}">
+            </label>
+            <label class="form-label" for="wgp-replacement-order">New replacement order number
+              <input class="form-control" id="wgp-replacement-order" data-key="replacementOrder" value="${escapeHtml(state.replacementOrder)}">
+            </label>
+          </div>
+          <p class="wgp-code-line">Reference format: <code>${preview}</code></p>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="orderReviewed"${checked(state.orderReviewed)}>
+              <span class="form-check-label">Customer, address, product, quantity, code, reference, and final balance reviewed</span>
+            </label>
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="orderCreated"${checked(state.orderCreated)}>
+              <span class="form-check-label">Shopify confirms the replacement order was created</span>
+            </label>
+          </div>`;
+      }
+
+      function notifyView() {
+        const customerName = escapeHtml(state.completeName || "{Customer Name}");
+        const orderNumber = escapeHtml(state.replacementOrder || "[replacement order number]");
+        const message = `Hello ${customerName},\n\nWe’ve created your replacement order, and your new order number is ${orderNumber}.\n\nOnce your order has been processed, it will be fulfilled and shipped within 1–3 business days. Delivery typically takes 3–7 business days after shipment. An email confirmation will be sent once your order ships and the tracking information is available.\n\nThere is no need to return the defective unit. You may properly dispose of it as you see fit. The warranty will be transferred to the replacement unit.`;
+        return `
+          <span class="viz-badge">Approved warranty only</span>
+          <label class="form-label" for="wgp-message">Customer-ready confirmation
+            <textarea class="form-control" id="wgp-message" rows="11" readonly>${message}</textarea>
+          </label>
+          <div class="viz-row">
+            <button type="button" class="btn" data-action="copy-message">Copy response</button>
+            <span class="text-muted wgp-copy-status" id="wgp-copy-status" aria-live="polite"></span>
+          </div>
+          <div class="wgp-choice-list">
+            <label class="form-check">
+              <input class="form-check-input" type="checkbox" data-key="customerNotified"${checked(state.customerNotified)}>
+              <span class="form-check-label">Customer notification sent</span>
+            </label>
+          </div>`;
+      }
+
+      function completeView() {
+        let outcome = "Warranty replacement completed";
+        if (state.closedMode === "resolved") outcome = "Resolved during troubleshooting";
+        if (state.closedMode === "oow") outcome = "Out-of-warranty option provided";
+        const sourceLabels = {
+          medify: "Medify Air",
+          reseller: "Authorized reseller",
+          amazon: "Amazon",
+          unauthorized: "Unauthorized or ineligible source"
+        };
+        const rows = [
+          ["Outcome", outcome],
+          ["Model/version", state.exactModel || "Not recorded"],
+          ["Purchase source", sourceLabels[state.source] || "Not needed"],
+          ["Original order/reference", state.originalOrder || "Not needed"],
+          ["Replacement order", state.replacementOrder || "Not created"],
+          ["Customer notified", state.customerNotified ? "Yes" : state.closedMode ? "Path completed" : "No"]
+        ];
+        return `
+          <div class="table-responsive">
+            <table class="table table-sm wgp-summary-table">
+              <thead><tr><th scope="col">Case field</th><th scope="col">Result</th></tr></thead>
+              <tbody>${rows.map((row) => `<tr><th scope="row">${row[0]}</th><td>${escapeHtml(row[1])}</td></tr>`).join("")}</tbody>
+            </table>
+          </div>`;
+      }
+
+      function renderContent() {
+        const views = [
+          troubleshootView,
+          evidenceView,
+          eligibilityView,
+          customerInfoView,
+          shopifyCustomerView,
+          replacementOrderView,
+          notifyView,
+          completeView
+        ];
+        content.innerHTML = views[state.step]();
+      }
+
+      function renderActions() {
+        if (state.step === 7) {
+          const previous = state.closedMode === "resolved" ? 0 : state.closedMode === "oow" ? 2 : 6;
+          actions.innerHTML = `<button type="button" class="btn btn-ghost" data-step="${previous}">Back to review</button>`;
+          return;
+        }
+        actions.innerHTML = `
+          <button type="button" class="btn btn-ghost" data-action="back"${state.step === 0 ? " disabled" : ""}>Back</button>
+          <button type="button" class="btn btn-primary" data-action="next">${state.step === 2 && state.source === "unauthorized" ? "Finish OOW path" : "Continue"}</button>`;
+      }
+
+      function render() {
+        const isComplete = state.step === 7;
+        stepCount.textContent = `Step ${state.step + 1} of ${steps.length}`;
+        overallStatus.textContent = isComplete ? "Case path complete" : "In progress";
+        currentStatus.textContent = isComplete ? "Outcome" : "Current";
+        currentTitle.textContent = steps[state.step].label;
+        nextAction.textContent = isComplete
+          ? "Review the final case outcome."
+          : `Next required action: ${steps[state.step].action}`;
+        const percent = ((state.step + 1) / steps.length) * 100;
+        progress.setAttribute("aria-valuenow", String(state.step + 1));
+        progressValue.style.width = `${percent}%`;
+        error.textContent = "";
+        renderNavigation();
+        renderContent();
+        renderActions();
+      }
+
+      function fail(message) {
+        error.textContent = message;
+      }
+
+      function advance() {
+        if (state.step === 0) {
+          if (!state.exactModel.trim()) return fail("Enter the exact model or version before continuing.");
+          if (!state.outcome) return fail("Select the troubleshooting result.");
+          if (state.outcome === "resolved") {
+            state.closedMode = "resolved";
+            state.step = 7;
+            state.maxStep = 7;
+            return render();
+          }
+          state.closedMode = "";
+        }
+
+        if (state.step === 1) {
+          if (!state.videoReceived) return fail("Confirm that the troubleshooting video was received.");
+          if (!state.source) return fail("Select the verified purchase source.");
+        }
+
+        if (state.step === 2) {
+          if (state.source === "unauthorized") {
+            if (!state.oowApproved || !state.oowShared) return fail("Verify the current offer and confirm that it was shared with the customer.");
+            state.closedMode = "oow";
+            state.step = 7;
+            state.maxStep = 7;
+            return render();
+          }
+          state.closedMode = "";
+          if (state.source === "medify" && !state.medifyOrderFound) return fail("Document whether the related Medify Air order was found.");
+          if ((state.source === "reseller" || state.source === "amazon") && !state.proofReceived) return fail("Confirm receipt of the invoice or acceptable proof of purchase.");
+          if (!state.originalOrder.trim()) return fail("Enter the verified order number or invoice reference.");
+          if (!state.warrantyVerified) return fail("Verify the registration, evidence, purchase source, and current warranty requirements.");
+        }
+
+        if (state.step === 3) {
+          if (!state.registration) return fail("Select the registration-information path.");
+          if (state.registration === "recent" && !state.registeredInfoReviewed) return fail("Review and confirm the registered information.");
+          if (state.registration === "older") {
+            const complete = state.completeName.trim() && state.address.trim() && state.email.trim() && state.phone.trim();
+            if (!complete) return fail("Complete the customer name, address, email, and contact number.");
+          }
+        }
+
+        if (state.step === 4) {
+          if (!state.customerExists) return fail("Select whether a Shopify customer record exists.");
+          if (state.customerExists === "yes" && !state.customerRecordReviewed) return fail("Confirm that the existing customer record was selected and reviewed.");
+          if (state.customerExists === "no" && !state.customerCreated) return fail("Confirm that the new Shopify customer record was created and reviewed.");
+        }
+
+        if (state.step === 5) {
+          if (!state.replacementModel.trim() || !state.replacementCode.trim() || !state.replacementOrder.trim()) return fail("Enter the verified replacement model, approved code, and new replacement order number.");
+          if (!state.orderReviewed || !state.orderCreated) return fail("Complete the order review and confirm that Shopify created the order.");
+        }
+
+        if (state.step === 6 && !state.customerNotified) return fail("Confirm that the customer notification was sent.");
+
+        state.step += 1;
+        state.maxStep = Math.max(state.maxStep, state.step);
+        render();
+      }
+
+      function goBack() {
+        if (state.step <= 0) return;
+        state.step -= 1;
+        render();
+      }
+
+      function updateState(target) {
+        const key = target.dataset.key;
+        if (!key) return;
+        state[key] = target.type === "checkbox" ? target.checked : target.value;
+        if (key === "outcome" && target.value === "not-resolved") state.closedMode = "";
+        if (key === "source" && target.value !== "unauthorized" && state.closedMode === "oow") state.closedMode = "";
+        const conditionalKeys = ["outcome", "source", "registration", "customerExists", "medifyOrderFound"];
+        if (conditionalKeys.includes(key)) render();
+      }
+
+      root.addEventListener("input", (event) => updateState(event.target));
+      root.addEventListener("change", (event) => updateState(event.target));
+
+      root.addEventListener("click", async (event) => {
+        const stepButton = event.target.closest("[data-step]");
+        if (stepButton && !stepButton.disabled) {
+          const targetStep = Number(stepButton.dataset.step);
+          if (targetStep <= state.maxStep || state.step === 7) {
+            state.step = targetStep;
+            render();
+          }
+          return;
+        }
+
+        const action = event.target.closest("[data-action]")?.dataset.action;
+        if (action === "next") advance();
+        if (action === "back") goBack();
+        if (action === "copy-message") {
+          const message = root.querySelector("#wgp-message");
+          const copyStatus = root.querySelector("#wgp-copy-status");
+          try {
+            await navigator.clipboard.writeText(message.value);
+            copyStatus.textContent = "Response copied.";
+          } catch (copyError) {
+            message.focus();
+            message.select();
+            copyStatus.textContent = "Response selected for copying.";
+          }
+        }
+      });
+
+      render();
+    })();
+  </script>
+</div>
