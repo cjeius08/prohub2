@@ -1,0 +1,47 @@
+/* Dashboard contrast corrections load after every legacy theme layer. */
+
+#hubView .section-heading .section-kicker {
+  color: #ffe89c !important;
+}
+
+#hubView .section-heading h2 {
+  color: #ffffff !important;
+  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.2) !important;
+}
+
+#hubView .section-heading p:not(.section-kicker) {
+  color: #e1edf3 !important;
+}
+
+#hubView .section-heading > span {
+  color: #ffe89c !important;
+}
+
+#hubView .result-header h2,
+#hubView .dashboard-section-title strong {
+  color: #061a34 !important;
+}
+
+#hubView .result-header span,
+#hubView .dashboard-card span:not(.card-icon) {
+  color: #3f4b55 !important;
+}
+
+#hubView .dashboard-section-title .section-kicker {
+  color: #74191d !important;
+}
+
+#hubView .dashboard-card strong {
+  color: #061a34 !important;
+}
+
+#hubView .quick-chip {
+  background: #fff7df !important;
+  color: #061a34 !important;
+}
+
+#hubView .quick-chip:hover,
+#hubView .quick-chip:focus-visible {
+  background: #f4dfad !important;
+  color: #061a34 !important;
+}

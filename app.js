@@ -1830,7 +1830,7 @@ function renderCurrentView() {
   if (state.view === "faqs") renderFaqs();
   if (state.view === "tools") renderTools();
   if (state.view === "favorites") renderFavorites();
-  if (state.view === "processes") window.GuidedProcessNavigator?.render();
+  if (state.view === "processes") window.SupportProcessGuides?.render();
 }
 
 function updateWorkspaceMode() {

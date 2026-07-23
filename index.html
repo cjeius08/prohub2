@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Cjei Work Hub</title>
     <link rel="stylesheet" href="styles.css?v=grand-line-4" />
-    <link rel="stylesheet" href="guided_processes.css?v=guided-process-1" />
+    <link rel="stylesheet" href="support_processes.css?v=support-processes-1" />
+    <link rel="stylesheet" href="dashboard_contrast.css?v=dashboard-contrast-1" />
   </head>
   <body>
     <header class="site-header">
@@ -92,9 +93,9 @@
               <small>Orders · Products · Support</small>
             </button>
             <div class="nav-dropdown-menu" id="caseTabsMenu" hidden>
-              <button class="nav-item" data-view="processes" title="Step-by-step warranty, shipping claim, and return workflows">
-                <span class="icon">GP</span>
-                <span>Guided Processes</span>
+              <button class="nav-item" data-view="processes" title="Interactive warranty, lost or damaged claim, and return workflows">
+                <span class="icon">SP</span>
+                <span>Support Process Guides</span>
               </button>
               <button class="nav-item" data-view="filterClub" title="Filter Club, subscriptions, cancellations, and charge-date changes">
                 <span class="icon">FC</span>
@@ -336,9 +337,9 @@ JA</pre>
           </div>
           <div class="dashboard-grid compact-dashboard" aria-label="Case workspace cards">
             <button class="dashboard-card" type="button" data-view="processes">
-              <span class="card-icon">GP</span>
-              <strong>Guided Processes</strong>
-              <span>Step-by-step Warranty, UPS claim, and Returns workflows with branching decisions and safe case summaries.</span>
+              <span class="card-icon">SP</span>
+              <strong>Support Process Guides</strong>
+              <span>Interactive Warranty, Lost or Damaged Claim, and Returns workflows with required checks and customer-ready emails.</span>
             </button>
             <button class="dashboard-card" type="button" data-view="filterClub">
               <span class="card-icon">FC</span>
@@ -1044,10 +1045,46 @@ Email: info@medifyair.com</pre>
             </article>
           </div>
         </section>
-        <section id="processesView" class="view guided-process-view">
-          <div id="guidedProcessApp" role="region" aria-label="Guided Process Navigator"></div>
+        <section id="processesView" class="view support-process-view">
+          <div id="supportProcessGuides" role="region" aria-label="Support Process Guides" aria-busy="true">
+            <header class="support-process-hero">
+              <div>
+                <p class="support-process-kicker">Support Process Guides</p>
+                <h2>Choose the customer’s case</h2>
+                <p>Follow the approved steps, complete every required check, and copy the correct customer response at the verified ending.</p>
+              </div>
+              <span class="support-process-safety">Internal guide only</span>
+            </header>
+
+            <div class="support-process-selector" role="tablist" aria-label="Choose a support process">
+              <button class="support-process-choice is-active" type="button" role="tab" id="supportTabWarranty" aria-selected="true" aria-controls="supportPanelWarranty" data-support-process="warranty">
+                <span class="support-process-icon" aria-hidden="true">W</span>
+                <span><strong>Warranty</strong><small>Troubleshooting, eligibility, replacement order, and notification</small></span>
+              </button>
+              <button class="support-process-choice" type="button" role="tab" id="supportTabClaim" aria-selected="false" aria-controls="supportPanelClaim" data-support-process="claim">
+                <span class="support-process-icon" aria-hidden="true">LD</span>
+                <span><strong>Lost or Damaged Claim</strong><small>Delivery scenarios, UPS evidence, approval gates, and replacement</small></span>
+              </button>
+              <button class="support-process-choice" type="button" role="tab" id="supportTabReturns" aria-selected="false" aria-controls="supportPanelReturns" data-support-process="returns">
+                <span class="support-process-icon" aria-hidden="true">R</span>
+                <span><strong>Returns</strong><small>Return window, condition review, return label, and resolution</small></span>
+              </button>
+            </div>
+
+            <p class="support-process-status" id="supportProcessStatus" aria-live="polite">Preparing the approved workflows…</p>
+
+            <div class="support-process-panels">
+              <div class="support-process-panel" id="supportPanelWarranty" role="tabpanel" aria-labelledby="supportTabWarranty" data-support-panel="warranty"></div>
+              <div class="support-process-panel" id="supportPanelClaim" role="tabpanel" aria-labelledby="supportTabClaim" data-support-panel="claim" hidden></div>
+              <div class="support-process-panel" id="supportPanelReturns" role="tabpanel" aria-labelledby="supportTabReturns" data-support-panel="returns" hidden></div>
+            </div>
+
+            <div class="support-process-error" id="supportProcessLoadError" role="alert" hidden>
+              The approved workflow files could not be loaded. Please refresh the page or confirm that all three support-process files are available.
+            </div>
+          </div>
           <noscript>
-            <div class="empty">JavaScript is required to use the Guided Process Navigator. All existing reference pages remain available from the navigation.</div>
+            <div class="empty">JavaScript is required to use the Support Process Guides. All existing reference pages remain available from the navigation.</div>
           </noscript>
         </section>
 
@@ -1060,12 +1097,12 @@ Email: info@medifyair.com</pre>
             </div>
             <span>Order flow</span>
           </div>
-          <aside class="guided-existing-cta" aria-label="Guided order process shortcut">
+          <aside class="support-process-cta" aria-label="Support process shortcut">
             <div>
               <strong>Need the full step-by-step process?</strong>
-              <span>Open the Guided Process Navigator for branching UPS claims, returns, refunds, and confirmation-safe summaries.</span>
+              <span>Open the Support Process Guides for Lost or Damaged Claims, Returns, and confirmation-safe customer responses.</span>
             </div>
-            <button type="button" data-view="processes">Open Guided Processes <span aria-hidden="true">→</span></button>
+            <button type="button" data-view="processes">Open Support Process Guides <span aria-hidden="true">→</span></button>
           </aside>
           <section class="flow-card">
             <h3>Clean order flow</h3>
@@ -1706,7 +1743,7 @@ Customer message / my notes:
     <script src="faq_data.js"></script>
     <script src="focus_music.js?v=grand-line-3"></script>
     <script src="grand-line-ui.js?v=grand-line-3"></script>
-    <script src="guided_processes.js?v=guided-process-1"></script>
+    <script src="support_processes.js?v=support-processes-1"></script>
     <script src="app.js?v=grand-line-3"></script>
   </body>
 </html>
